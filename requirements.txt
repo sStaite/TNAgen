@@ -1,0 +1,9 @@
+torchgan>=0.1.0
+torch>=1.2
+torchvision>=0.4
+pandas>=1.2.2
+h5py>=3.2.1
+numpy
+pandas
+librosa
+matplotlib
