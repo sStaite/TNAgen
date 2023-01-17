@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "TNAgen"
+version = "0.0.1"
+authors = [
+  { name="Seamus Staite", email="seamus.staite@gmail.com" },
+  { name="Jade Powell", email="jade.powell@ligo.org" },
+]
+description = "A package that generates transient noise artifacts in gravitational-wave detector data."
+readme = "README.md"
+requires-python = ">=3.8.5"
+classifiers = [
+    'Development Status :: 3 - Alpha',
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GPL License",
+    "Operating System :: OS Independent",
+]
