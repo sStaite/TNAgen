@@ -1,11 +1,11 @@
 Timeseries with Spectrogram - upside down
 Funky looking resampling
     looking at treating neg/pos as different timeseries then resampling then convert back
-how to download models on the go
+how to download models on the go - git lfs 
+comment on code
 
 readme 
 readthedocs
-git repository
 git lfs
 
 
