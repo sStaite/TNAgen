@@ -44,7 +44,7 @@ def testSpectrogram():
 
     window = np.blackman(NFFT)
     spec_cmap='gist_ncar'
-    plt.figure(figsize=(8,4))
+    plt.figure(figsize=(7, 8.5))
     spec_H1, freqs, bins, im = plt.specgram(strain, NFFT=NFFT, Fs=fs, window=window,
         noverlap=NOVL, cmap=spec_cmap, scale='linear',mode='magnitude')
     plt.ylim(0,4096//2)
