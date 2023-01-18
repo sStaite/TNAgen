@@ -196,11 +196,13 @@ class Generator():
 
 
             time_series = librosa.griffinlim(self.curr_array[i], n_iter=64)
-            #time_series = signal.resample(time_series, 8192)
-            x = np.arange(0, 11661)
-            func = interpolate.interp1d(x, -1 * time_series)
-            new_size = np.arange(0, 4096*2)
-            time_series = func(new_size)
+            time_series[1::2] *= -1            
+            time_series = signal.resample(time_series, 8192)
+
+            #x = np.arange(0, 11661)
+            #func = interpolate.interp1d(x, time_series)
+            #new_size = np.arange(0, 4096*2)
+            #time_series = func(new_size)
 
             """
             plt.plot((np.arange(11661) / float(11661/2)), time_series)
