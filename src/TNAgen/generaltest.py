@@ -8,11 +8,11 @@ def testGenerator():
     generator = Generator()
     generator.generate("Koi_Fish", 1)
     generator.generate("Blip", 1)
-    generator.save_as_png("src/data/images")
-    generator.save_as_hdf5("src/data/images", "mydata", clear_queue=True)
+    generator.save_as_png("src/data/sanity_images")
+    generator.save_as_hdf5("src/data/sanity_images", "mydata", clear_queue=True)
 
 def testRest():
-    filepath = "src/data/images/mydata.hdf5"
+    filepath = "src/data/sanity_images/mydata.hdf5"
     channel1 = "Koi_Fish_timeseries_0"
     channel2 = "Blip_timeseries_1"
 
@@ -20,19 +20,19 @@ def testRest():
     strain.sample_rate = 4096
     plt.plot(strain, 'forestgreen')
     plt.xlabel("Time (Seconds)")
-    plt.savefig("src/data/images/test1.png")
+    plt.savefig("src/data/sanity_images/test1.png")
     plt.clf()
 
     strain = TimeSeries.read(filepath, channel2)
     strain.sample_rate = 4096
     plt.plot(strain, 'plum')
     plt.xlabel("Time (Seconds)")
-    plt.savefig("src/data/images/test2.png")
+    plt.savefig("src/data/sanity_images/test2.png")
     plt.clf()
     plt.close()
 
 def testSpectrogram():
-    filepath = "src/data/images/mydata.hdf5"
+    filepath = "src/data/sanity_images/mydata.hdf5"
     channel1 = "Koi_Fish_timeseries_0"
 
     strain = TimeSeries.read(filepath, channel1)
@@ -43,8 +43,8 @@ def testSpectrogram():
     NOVL = int(NFFT*15./16)
 
     window = np.blackman(NFFT)
-    spec_cmap='gist_ncar'
-    plt.figure(figsize=(7, 8.5))
+    spec_cmap='viridis'
+    plt.figure(figsize=(8.5, 7))
     spec_H1, freqs, bins, im = plt.specgram(strain, NFFT=NFFT, Fs=fs, window=window,
         noverlap=NOVL, cmap=spec_cmap, scale='linear',mode='magnitude')
     plt.ylim(0,4096//2)
