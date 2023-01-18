@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 import pandas as pd 
 import librosa
-from scipy import signal
+from scipy import signal, interpolate
 import h5py
 
 #n_images_to_generate = 100
@@ -188,10 +188,19 @@ class Generator():
 
         for i in range(len(self.curr_array)):
             # First convert the spectrogram data to timeseries data
-            time_series = -1 * librosa.griffinlim(self.curr_array[i], n_iter=32)
-            time_series = signal.resample(time_series, 8192)
-            
-            testSpectrogram(time_series)
+
+            fs = 4096
+
+            NFFT = int(fs/16.)
+            NOVL = int(NFFT*15./16)
+
+
+            time_series = librosa.griffinlim(self.curr_array[i], n_iter=64)
+            #time_series = signal.resample(time_series, 8192)
+            x = np.arange(0, 11661)
+            func = interpolate.interp1d(x, -1 * time_series)
+            new_size = np.arange(0, 4096*2)
+            time_series = func(new_size)
 
             """
             plt.plot((np.arange(11661) / float(11661/2)), time_series)
@@ -223,84 +232,3 @@ class Generator():
         self.curr_array = []
         self.curr_glitch = []
             
-
-
-
-def testGenerator():
-    generator = Generator()
-    generator.generate("Koi_Fish", 1)
-    generator.generate("Blip", 1)
-    generator.save_as_png("src/data/images")
-    generator.save_as_hdf5("src/data/images", "mydata", clear_queue=True)
-
-from gwpy.timeseries import TimeSeries
-
-def testRest():
-    filepath = "src/data/images/mydata.hdf5"
-    channel1 = "Koi_Fish_timeseries_0"
-    channel2 = "Blip_timeseries_1"
-
-    fs = 4096
-
-    strain = TimeSeries.read(filepath, channel1)
-
-    NFFT = int(fs/16.)
-    NOVL = int(NFFT*15./16)
-
-    window = np.blackman(NFFT)
-
-    spec_cmap='gist_ncar'
-
-    plt.figure(figsize=(8,4))
-
-    spec_H1, freqs, bins, im = plt.specgram(strain, NFFT=NFFT, Fs=fs, window=window,
-
-        noverlap=NOVL, cmap=spec_cmap, scale='linear',mode='magnitude')
-
-    plt.ylim(0,2000)
-
-    plt.xlabel('time (s)',fontsize=14)
-
-    plt.ylabel('frequency (Hz)',fontsize=14)
-
-    plt.show()
-
-    """
-    strain = TimeSeries.read(filepath, channel1)
-    strain.sample_rate = 4096
-    plt.plot(strain, 'forestgreen')
-    plt.xlabel("Time (Seconds)")
-    plt.savefig("src/data/images/test1.png")
-    plt.clf()
-
-    strain = TimeSeries.read(filepath, channel2)
-    strain.sample_rate = 4096
-    plt.plot(strain, 'plum')
-    plt.xlabel("Time (Seconds)")
-    plt.savefig("src/data/images/test2.png")
-    """
-
-def testSpectrogram(time_series):
-    fs = 4096
-
-    f, t, Sxx = signal.spectrogram(time_series, fs)
-    plt.pcolormesh(t, f, Sxx)
-    plt.ylim(2**3, 2**11.5)
-    plt.ylabel('Frequency [Hz]')
-    plt.xlabel('Time [sec]')
-    plt.show()
-    plt.clf()
-
-    plt.specgram(time_series, NFFT=1024, Fs=fs)
-    plt.ylim(2**3, 2**11.5)
-    plt.ylabel('Frequency [Hz]')
-    plt.xlabel('Time [sec]')
-    plt.show()
-    plt.clf()
-
-if __name__ == "__main__":
-    testGenerator()
-    testRest()
-
-
-    
