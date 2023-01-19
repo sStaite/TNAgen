@@ -19,9 +19,11 @@ class Generator():
 
     def __init__(self):
 
+        # Initialize empty lists to store generated images and labels
         self.curr_array = []
         self.curr_glitch = []
 
+        # Set up the generator  parameters
         gen_args = {
             "out_size":256,
             "encoding_dims": 170,
@@ -59,23 +61,25 @@ class Generator():
         
         """
 
-        ## Generate X array for  glitches
+        ## Generate X array for glitches
         index = 0
         np_array = np.zeros((n_images_to_generate, 140, 170))
 
+        # Load model weights for the specified glitch
         model_weights_file = "src/data/models/{}_GAN.model".format(glitch)
         state_dict = torch.load(model_weights_file, map_location='cpu')
         self.generator.load_state_dict(state_dict)
         
-        inputs = [self.generator.sampler(1,torch.device('cpu')) for _ in range(n_images_to_generate)]
-
+        # Generate the images using the generator
+        inputs = []
         outputs = []
+        label_list = []
         for i in range(n_images_to_generate):
+            inputs.append(self.generator.sampler(1,torch.device('cpu')))
+            
             outputs.append(self.generator(inputs[i][0]))
 
-        label_list = []
-
-        for i in range(n_images_to_generate):
+            # Turn output into numpy arrays
             im = outputs[i].detach().numpy()
             im = im[0, :,:,:]
             im = im[:, 0:140, 0:170] 
@@ -83,6 +87,9 @@ class Generator():
             np_array[i] = im
             label_list.append(glitch)
 
+            self.__timer("Generating images:", i+1, n_images_to_generate)
+        
+        # Update the queue or create it if it does not exist
         if len(self.curr_array) == 0:
             self.curr_array = np_array
             self.curr_glitch = label_list
@@ -107,31 +114,38 @@ class Generator():
             The array can be accessed through 'generator.curr_array' and the glitch labels through 'generator.curr_glitch'
         """
         
+        # Generate X array for glitches
         np_arrays = np.zeros((len(self.glitches) * n_images_to_generate, 140, 170))
         label_list = []
         index = 0
 
+        # Iterate over each glitch and generate the images
         for glitch in self.glitches:
-            model_weights_file = "src/data/models/{}.model".format(glitch)
-            state_dict = torch.load(model_weights_file, map_location='cpu')['generator']
+            model_weights_file = "src/data/models/{}_GAN.model".format(glitch)
+            state_dict = torch.load(model_weights_file, map_location='cpu')
             self.generator.load_state_dict(state_dict)
             
-            inputs = [self.generator.sampler(1,torch.device('cpu')) for _ in range(n_images_to_generate)]
-
+            inputs = []
             outputs = []
             for i in range(n_images_to_generate):
+                inputs.append(self.generator.sampler(1,torch.device('cpu')))
+                
                 outputs.append(self.generator(inputs[i][0]))
 
-            for i in range(n_images_to_generate):
+                # Turn output into numpy arrays
                 im = outputs[i].detach().numpy()
                 im = im[0, :,:,:]
                 im = im[:, 0:140, 0:170] 
                 
                 np_arrays[index] = im
                 label_list.append(glitch)
-                index += 1
-        
 
+                self.__timer("Generating images:", index+1, n_images_to_generate*len(self.glitches))
+                index+=1
+
+
+        
+        # Update the queue or create it if it does not exist
         if len(self.curr_array) == 0:
             self.curr_array = np_arrays
             self.curr_glitch = label_list
@@ -162,6 +176,9 @@ class Generator():
             count_dict[self.curr_glitch[i]] += 1
             
             plt.imsave(path + f"/{self.curr_glitch[i]}_{index}.png", self.curr_array[i])
+
+            self.__timer("Saving images:    ", i+1, len(self.curr_array))
+
             index+=1
 
         if clear_queue:
@@ -190,32 +207,14 @@ class Generator():
             # First convert the spectrogram data to timeseries data
 
             fs = 4096
-
             NFFT = int(fs/16.)
             NOVL = int(NFFT*15./16)
-
 
             time_series = librosa.griffinlim(self.curr_array[i], n_iter=64)
             time_series[1::2] *= -1            
             time_series = signal.resample(time_series, 8192)
 
-            #x = np.arange(0, 11661)
-            #func = interpolate.interp1d(x, time_series)
-            #new_size = np.arange(0, 4096*2)
-            #time_series = func(new_size)
-
-            """
-            plt.plot((np.arange(11661) / float(11661/2)), time_series)
-            plt.savefig(path + f"/{self.curr_glitch[i]}_timeseries_{i}.png")
-            plt.clf()
-
-            q = librosa.feature.melspectrogram(time_series, 2000)
-            print(q.shape)
-            plt.pcolormesh(q)
-            plt.ylabel('Frequency [Hz]')
-            plt.xlabel('Time [sec]')
-            plt.show()
-            """
+            self.__timer("Saving timeseries:", i+1, len(self.curr_array))
 
             f.create_dataset(f"/{self.curr_glitch[i]}_timeseries_{i}", data=time_series, compression="gzip")
 
@@ -233,3 +232,10 @@ class Generator():
         self.curr_array = []
         self.curr_glitch = []
             
+    def __timer(self, msg, curr, total):
+        bars = curr*20 // total
+        digits = len(str(total))
+        print(msg + " " + str(curr).rjust(digits, " ") + f"/{total} [" + "-"*bars + " "*(20-bars) + "]", end="\r")
+
+        if curr == total:
+            print()
