@@ -6,9 +6,9 @@ import numpy as np
 
 def testGenerator():
     generator = Generator()
-    generator.generate_all(100)
+    generator.generate("Helix", 100)
     generator.save_as_png("src/data/sanity_images")
-    #generator.save_as_hdf5("src/data/sanity_images", "mydata", clear_queue=True)
+    generator.save_as_hdf5("src/data/sanity_images", "mydata", clear_queue=True)
 
 def testRest():
     filepath = "src/data/sanity_images/mydata.hdf5"
