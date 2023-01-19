@@ -4,3 +4,8 @@ comment on code
 readme 
 readthedocs
 
+generating: 30 images per second
+saving as png: 116.6 images per second
+convert to hdf5 and saving: 3.14 images per second
+
+to generate and convert to hdf5: 1000 images takes almost 6 minutes
