@@ -6,34 +6,24 @@ import numpy as np
 
 def testGenerator():
     generator = Generator()
-    generator.generate("Koi_Fish", 1)
-    generator.generate("Blip", 1)
+    generator.generate("Chirp", 1)
     generator.save_as_png("src/data/sanity_images")
     generator.save_as_hdf5("src/data/sanity_images", "mydata", clear_queue=True)
 
 def testRest():
     filepath = "src/data/sanity_images/mydata.hdf5"
-    channel1 = "Koi_Fish_timeseries_0"
-    channel2 = "Blip_timeseries_1"
+    channel1 = "Chirp_timeseries_0"
 
     strain = TimeSeries.read(filepath, channel1)
     strain.sample_rate = 4096
     plt.plot(strain, 'forestgreen')
     plt.xlabel("Time (Seconds)")
     plt.savefig("src/data/sanity_images/test1.png")
-    plt.clf()
-
-    strain = TimeSeries.read(filepath, channel2)
-    strain.sample_rate = 4096
-    plt.plot(strain, 'plum')
-    plt.xlabel("Time (Seconds)")
-    plt.savefig("src/data/sanity_images/test2.png")
-    plt.clf()
     plt.close()
 
 def testSpectrogram():
     filepath = "src/data/sanity_images/mydata.hdf5"
-    channel1 = "Koi_Fish_timeseries_0"
+    channel1 = "Chirp_timeseries_0"
 
     strain = TimeSeries.read(filepath, channel1)
 
