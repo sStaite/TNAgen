@@ -63,8 +63,8 @@ class Generator():
         index = 0
         np_array = np.zeros((n_images_to_generate, 140, 170))
 
-        model_weights_file = "src/data/models/{}.model".format(glitch)
-        state_dict = torch.load(model_weights_file, map_location='cpu')['generator']
+        model_weights_file = "src/data/models/{}_GAN.model".format(glitch)
+        state_dict = torch.load(model_weights_file, map_location='cpu')
         self.generator.load_state_dict(state_dict)
         
         inputs = [self.generator.sampler(1,torch.device('cpu')) for _ in range(n_images_to_generate)]
@@ -224,7 +224,6 @@ class Generator():
 
         if clear_queue:
             self.clear_queue()
-
 
 
     def clear_queue(self):
