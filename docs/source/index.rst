@@ -9,3 +9,8 @@ Welcome to TNAgen's documentation!
 
    usage
    modules
+
+.. autosummary::
+   :toctree: _autosummary
+
+   TNAgen.Generator
