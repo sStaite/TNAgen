@@ -1,8 +1,5 @@
-TNAgen package
-==============
-
-Submodules
-----------
+Package documentation
+=====================
 
 Generator class
 -----------------------
