@@ -6,11 +6,12 @@ Welcome to TNAgen's documentation!
 .. autosummary::
    :toctree: _autosummary
 
-   TNAgen.Generator
+   TNAgen
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    usage
-   TNAgen
+   _autosummary/TNAgen
+   _autosummary/TNAgen.Generator
