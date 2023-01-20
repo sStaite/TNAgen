@@ -7,5 +7,4 @@ Welcome to TNAgen's documentation!
 
    intro
    usage
-   modules
-   TNAgen
+   TNAgen 
