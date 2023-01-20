@@ -13,11 +13,13 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
-sys.path.insert(0, os.path.abspath(os.path.join('..', '..', 'src')))
-sys.path.insert(0, os.path.abspath('../../src/TNAgen'))
 sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('../../src'))
+sys.path.insert(0, os.path.abspath('../../src/TNAgen'))
 
 # -- Project information -----------------------------------------------------
+
+print(sys.executable)
 
 project = 'TNAgen'
 copyright = '2023, Jade Powell, Seamus Staite'
