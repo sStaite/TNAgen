@@ -4,6 +4,6 @@ torchvision>=0.4
 pandas>=1.2.2
 h5py>=3.2.1
 numpy
+matplotlib
 pandas
 librosa
-matplotlib
