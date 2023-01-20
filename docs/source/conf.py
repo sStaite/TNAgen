@@ -34,6 +34,7 @@ release = '1.0.0'
 # ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx.ext.autosummary']
 autodoc_mock_imports = ['torchgan', 'torch', 'librosa', 'gwpy']
+autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
