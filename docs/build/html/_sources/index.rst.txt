@@ -7,6 +7,9 @@ Welcome to TNAgen's documentation!
    :recursive:
 
    TNAgen
+   TNAgen.Generator
+   TNAgen.Generator.Generator
+   TNAgen.Generator.Generator.generate
 
 .. toctree::
    :maxdepth: 2
