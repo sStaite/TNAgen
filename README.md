@@ -30,7 +30,7 @@ $ python setup.py install
 ```
 
 ## Documentation
-Documentation can be found NOT_READY_YET
+Documentation can be found at https://trialingtnagen.readthedocs.io/en/stable/
 
 ## Examples
 First, we need to import the Generator module and instatiate a Generator object.
