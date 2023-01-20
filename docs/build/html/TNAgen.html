@@ -38,23 +38,23 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-TNAgen.Generator">
-<span id="tnagen-generator-module"></span><h2>TNAgen.Generator module<a class="headerlink" href="#module-TNAgen.Generator" title="Permalink to this heading">¶</a></h2>
+<section id="generator-class">
+<h2>Generator class<a class="headerlink" href="#generator-class" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="TNAgen.Generator.Generator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TNAgen.Generator.</span></span><span class="sig-name descname"><span class="pre">Generator</span></span><a class="headerlink" href="#TNAgen.Generator.Generator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="Generator.Generator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Generator.</span></span><span class="sig-name descname"><span class="pre">Generator</span></span><a class="headerlink" href="#Generator.Generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Transient noise artifacts generator from ‘“Generating transient noise artefacts in gravitational-wave
 detector data with generative adversarial networks by Powell et. al. ” &lt;<a class="reference external" href="https://arxiv.org/abs/2207.00207">https://arxiv.org/abs/2207.00207</a>&gt;’</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="TNAgen.Generator.Generator.clear_queue">
-<span class="sig-name descname"><span class="pre">clear_queue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TNAgen.Generator.Generator.clear_queue" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="Generator.Generator.clear_queue">
+<span class="sig-name descname"><span class="pre">clear_queue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.clear_queue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clears the current queue of artifacts.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="TNAgen.Generator.Generator.generate">
-<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">glitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_images_to_generate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TNAgen.Generator.Generator.generate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="Generator.Generator.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">glitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_images_to_generate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.generate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates images for the given glitch in the form of numpy arrays, and adds it to the ‘queue’.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -74,8 +74,8 @@ and a (n_images_to_generate) list of corresponding glitch labels.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="TNAgen.Generator.Generator.generate_all">
-<span class="sig-name descname"><span class="pre">generate_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_images_to_generate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TNAgen.Generator.Generator.generate_all" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="Generator.Generator.generate_all">
+<span class="sig-name descname"><span class="pre">generate_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_images_to_generate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.generate_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates images for all the glitches, in the form of numpy arrays.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -94,8 +94,8 @@ and a (n_images_to_generate * num_of_glitches) list of corresponding glitch labe
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="TNAgen.Generator.Generator.save_as_hdf5">
-<span class="sig-name descname"><span class="pre">save_as_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'timeseries'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TNAgen.Generator.Generator.save_as_hdf5" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="Generator.Generator.save_as_hdf5">
+<span class="sig-name descname"><span class="pre">save_as_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'timeseries'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.save_as_hdf5" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the queue of artifacts in a h5 file. The snippets are 2 seconds long.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -109,8 +109,8 @@ and a (n_images_to_generate * num_of_glitches) list of corresponding glitch labe
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="TNAgen.Generator.Generator.save_as_png">
-<span class="sig-name descname"><span class="pre">save_as_png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#TNAgen.Generator.Generator.save_as_png" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="Generator.Generator.save_as_png">
+<span class="sig-name descname"><span class="pre">save_as_png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.save_as_png" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the queue of artifacts, which are in the form of a spectrogram, as png files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -124,27 +124,6 @@ and a (n_images_to_generate * num_of_glitches) list of corresponding glitch labe
 
 </dd></dl>
 
-</section>
-<section id="module-TNAgen.generaltest">
-<span id="tnagen-generaltest-module"></span><h2>TNAgen.generaltest module<a class="headerlink" href="#module-TNAgen.generaltest" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="TNAgen.generaltest.testGenerator">
-<span class="sig-prename descclassname"><span class="pre">TNAgen.generaltest.</span></span><span class="sig-name descname"><span class="pre">testGenerator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TNAgen.generaltest.testGenerator" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="TNAgen.generaltest.testRest">
-<span class="sig-prename descclassname"><span class="pre">TNAgen.generaltest.</span></span><span class="sig-name descname"><span class="pre">testRest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TNAgen.generaltest.testRest" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="TNAgen.generaltest.testSpectrogram">
-<span class="sig-prename descclassname"><span class="pre">TNAgen.generaltest.</span></span><span class="sig-name descname"><span class="pre">testSpectrogram</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TNAgen.generaltest.testSpectrogram" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</section>
-<section id="module-TNAgen">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-TNAgen" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -176,9 +155,7 @@ and a (n_images_to_generate * num_of_glitches) list of corresponding glitch labe
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">TNAgen package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-TNAgen.Generator">TNAgen.Generator module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-TNAgen.generaltest">TNAgen.generaltest module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-TNAgen">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generator-class">Generator class</a></li>
 </ul>
 </li>
 </ul>

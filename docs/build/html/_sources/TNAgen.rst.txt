@@ -4,26 +4,10 @@ TNAgen package
 Submodules
 ----------
 
-TNAgen.Generator module
+Generator class
 -----------------------
 
-.. automodule:: TNAgen.Generator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-TNAgen.generaltest module
--------------------------
-
-.. automodule:: TNAgen.generaltest
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: TNAgen
+.. autoclass:: Generator.Generator
    :members:
    :undoc-members:
    :show-inheritance:
