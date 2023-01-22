@@ -6,7 +6,7 @@ import numpy as np
 
 def testGenerator():
     generator = Generator()
-    generator.generate("Helix", 100)
+    generator.generate("Chirp", 1)
     generator.save_as_png("src/data/sanity_images")
     generator.save_as_hdf5("src/data/sanity_images", "mydata", clear_queue=True)
 
@@ -18,7 +18,7 @@ def testRest():
     strain.sample_rate = 4096
     plt.plot(strain, 'forestgreen')
     plt.xlabel("Time (Seconds)")
-    plt.savefig("src/data/sanity_images/test1.png")
+    plt.savefig("src/data/sanity_images/test2.png")
     plt.close()
 
 def testSpectrogram():
@@ -44,7 +44,7 @@ def testSpectrogram():
 
 if __name__ == "__main__":
     testGenerator()
-    #testRest()
+    testRest()
     #testSpectrogram()
 
     
