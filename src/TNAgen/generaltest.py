@@ -6,20 +6,20 @@ import numpy as np
 
 def testGenerator():
     generator = Generator()
-    generator.generate("Blip", 2, clean=True)
+    generator.generate("Wandering_Line", 2, clean=True)
     generator.save_as_png("src/data/sanity_images")
     generator.save_as_hdf5("src/data/sanity_images", "mydata", clear_queue=True)
 
 def testRest():
     filepath = "src/data/sanity_images/mydata.hdf5"
 
-    channel1 = "Blip_timeseries_0"
+    channel1 = "Wandering_Line_timeseries_0"
 
     strain = TimeSeries.read(filepath, channel1)
     strain.sample_rate = 4096
     plt.plot(strain, 'forestgreen')
     plt.xlabel("Time (Seconds)")
-    plt.savefig("src/data/sanity_images/Blip_timeseries.png")
+    plt.savefig("src/data/sanity_images/Wandering_Line_timeseries.png")
     plt.close()
 
 
