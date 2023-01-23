@@ -266,32 +266,39 @@ class Generator():
             A spectrogram of the same shape, which has been cleaned of noise.
         """
 
-        threshold = 0.35
+        leftover = ["1080Lines", "Extremely_Loud", "Helix", "Light_Modulation", "No_Glitch", "None_of_the_Above", 
+                    "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle"]
+        both = ["Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
+        vertical_only = ["1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte"]
 
-
-        indmax = np.unravel_index(np.argmax(spectrogram, axis=None), spectrogram.shape)
-        min_time = max_time = indmax[2]
-        p = spectrogram[indmax]
-        
-        # Find the upper and lower bounds of the glitch
-        while (p > threshold):
-
-            if spectrogram[0, :, min_time].max() > threshold:
-                print('hi')
-                min_time -= 1
+        if (glitch in vertical_only):
             
-            if spectrogram[0, :, max_time].max() > threshold:
-                max_time += 1
+            threshold = 0.3
 
-            if min_time == -1 or max_time == 170:
-                break
+            indmax = np.unravel_index(np.argmax(spectrogram, axis=None), spectrogram.shape)
+            min_time = max_time = indmax[2]
+            p = spectrogram[indmax]
+            
+            # Find the upper and lower bounds of the glitch
+            while (p > threshold):
 
-            p = max(spectrogram[0, :, min_time].max(), spectrogram[0, :, max_time].max())
-        
+                if spectrogram[0, :, min_time].max() > threshold:
+                    min_time -= 1
+                
+                if spectrogram[0, :, max_time].max() > threshold:
+                    max_time += 1
 
-        spectrogram[0, :, 0:min_time] = 0
-        spectrogram[0, :, max_time:] = 0
-        spectrogram[spectrogram < threshold] = 0
+                if min_time == -1 or max_time == 170:
+                    min_time = 0
+                    max_time = 169
+                    break
+
+                p = max(spectrogram[0, :, min_time].max(), spectrogram[0, :, max_time].max())
+            
+
+            spectrogram[0, :, 0:min_time] = 0
+            spectrogram[0, :, max_time:] = 0
+            spectrogram[spectrogram < threshold] = 0
 
         return spectrogram
     
