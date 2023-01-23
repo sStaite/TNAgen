@@ -47,7 +47,7 @@ class Generator():
         self.glitches = self.label_df['label'].tolist()
 
 
-    def generate(self, glitch, n_images_to_generate):
+    def generate(self, glitch, n_images_to_generate, clean=False):
         """
         Generates images for the given glitch in the form of numpy arrays, and adds it to the 'queue'.
 
@@ -84,7 +84,11 @@ class Generator():
             im = im[0, :,:,:]
             im = im[:, 0:140, 0:170] 
             
-            np_array[i] = im
+            if clean:
+                im = self.clean_spectrogram(im, glitch)
+
+            np_array[i] = im 
+
             label_list.append(glitch)
 
             self.__timer("Generating images:", i+1, n_images_to_generate)
@@ -100,7 +104,7 @@ class Generator():
         return (np_array, label_list)
 
 
-    def generate_all(self, n_images_to_generate):
+    def generate_all(self, n_images_to_generate, clean=False):
         """
         Generates images for all the glitches, in the form of numpy arrays.
 
@@ -136,7 +140,10 @@ class Generator():
                 im = outputs[i].detach().numpy()
                 im = im[0, :,:,:]
                 im = im[:, 0:140, 0:170] 
-                
+
+                if clean:
+                    im = self.clean_spectrogram(im, glitch)
+
                 np_arrays[index] = im
                 label_list.append(glitch)
 
@@ -203,20 +210,21 @@ class Generator():
 
         f = h5py.File(filepath, "w")
 
+        count_dict = {string: 0 for string in set(self.curr_glitch)}
+
         for i in range(len(self.curr_array)):
             # First convert the spectrogram data to timeseries data
 
-            fs = 4096
-            NFFT = int(fs/16.)
-            NOVL = int(NFFT*15./16)
+            index = count_dict[self.curr_glitch[i]]
+            count_dict[self.curr_glitch[i]] += 1
 
-            time_series = librosa.griffinlim(self.curr_array[i], n_iter=64)
-            time_series[1::2] *= -1            
-            time_series = signal.resample(time_series, 8192)
+            time_series = self.convert_to_timeseries(self.curr_array[i]) * (1/0.04)
 
             self.__timer("Saving timeseries:", i+1, len(self.curr_array))
 
-            f.create_dataset(f"/{self.curr_glitch[i]}_timeseries_{i}", data=time_series, compression="gzip")
+            f.create_dataset(f"/{self.curr_glitch[i]}_timeseries_{index}", data=time_series, compression="gzip")
+
+            index+=1
 
         f.flush()
         f.close()
@@ -225,6 +233,69 @@ class Generator():
             self.clear_queue()
 
 
+    def convert_to_timeseries(self, spectrogram):
+        """
+        Converts the given spectrogram into a timeseries.
+
+        Args:
+            spectrogram: a 170x140 numpy array of a spectrogram of a glitch
+    
+        Returns:
+            A 2 second timeseries (8192 datapoints at 4096Hz) of the spectrogram data
+        """
+
+        fs = 4096
+        NFFT = int(fs/16.)
+        NOVL = int(NFFT*15./16)
+
+        time_series = librosa.griffinlim(spectrogram, n_iter=64)
+        time_series[1::2] *= -1            
+        time_series = signal.resample(time_series, 8192)
+
+        return time_series
+
+
+    def clean_spectrogram(self, spectrogram, glitch):
+        """
+        Removes all datapoints below a certain threshold.
+
+        Args:
+            spectrogram: a 170x140 numpy array of spectrogram data 
+
+        Returns:
+            A spectrogram of the same shape, which has been cleaned of noise.
+        """
+
+        threshold = 0.35
+
+
+        indmax = np.unravel_index(np.argmax(spectrogram, axis=None), spectrogram.shape)
+        min_time = max_time = indmax[2]
+        p = spectrogram[indmax]
+        
+        # Find the upper and lower bounds of the glitch
+        while (p > threshold):
+
+            if spectrogram[0, :, min_time].max() > threshold:
+                print('hi')
+                min_time -= 1
+            
+            if spectrogram[0, :, max_time].max() > threshold:
+                max_time += 1
+
+            if min_time == -1 or max_time == 170:
+                break
+
+            p = max(spectrogram[0, :, min_time].max(), spectrogram[0, :, max_time].max())
+        
+
+        spectrogram[0, :, 0:min_time] = 0
+        spectrogram[0, :, max_time:] = 0
+        spectrogram[spectrogram < threshold] = 0
+
+        return spectrogram
+    
+    
     def clear_queue(self):
         """
         Clears the current queue of artifacts.
@@ -232,6 +303,7 @@ class Generator():
         self.curr_array = []
         self.curr_glitch = []
             
+    
     def __timer(self, msg, curr, total):
         bars = curr*20 // total
         digits = len(str(total))
