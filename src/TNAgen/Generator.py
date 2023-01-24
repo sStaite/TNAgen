@@ -266,22 +266,35 @@ class Generator():
             A spectrogram of the same shape, which has been cleaned of noise.
         """
 
-        both = ["Paired_Doves", "Extremely_Loud", "Air_Compressor", "Low_Frequency_Lines", "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Power_Line"]
         other = ["1080Lines", "Helix", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle", 
                 "Low_Frequency_Burst", "Light_Modulation"]
 
+        both = ["Paired_Doves", "Extremely_Loud", "Air_Compressor", "Low_Frequency_Lines", "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Power_Line"]
+        recurring_horizontally = other
+        recurring_vertically = []
+
+
+
 
         if glitch in both: 
-            
             threshold = 0.30
             if glitch in ["Low_Frequency_Lines", "Paired_Doves"]: 
                 threshold = 0.25
 
             self.clean_vertically(spectrogram, threshold)
             self.clean_horizontally(spectrogram, threshold)
-
             spectrogram[spectrogram < threshold] = 0
 
+        if glitch in recurring_horizontally:
+            threshold = 0.30
+            self.clean_vertically(spectrogram, threshold)
+            spectrogram[spectrogram < threshold] = 0
+
+        if glitch in recurring_vertically:
+            threshold = 0.30
+            self.clean_horizontally(spectrogram, threshold)
+            spectrogram[spectrogram < threshold] = 0
+            
         return spectrogram
 
 
