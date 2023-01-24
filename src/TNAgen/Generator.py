@@ -266,21 +266,16 @@ class Generator():
             A spectrogram of the same shape, which has been cleaned of noise.
         """
 
-        both = ["Paired_Doves", "Extremely_Loud", "Light_Modulation", "Air_Compressor", "Low_Frequency_Burst", "Low_Frequency_Lines"
-            "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Power_Line"]
-        other = ["1080Lines", "Helix", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle"]
+        both = ["Paired_Doves", "Extremely_Loud", "Air_Compressor", "Low_Frequency_Lines", "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Power_Line"]
+        other = ["1080Lines", "Helix", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle", 
+                "Low_Frequency_Burst", "Light_Modulation"]
 
-        #check again:
-        # air compressor
-        # extremely loud
-        # light modulation
-        # low freq burst
-        # low freq lines
-        # paired doves
 
         if glitch in both: 
             
             threshold = 0.30
+            if glitch in ["Low_Frequency_Lines", "Paired_Doves"]: 
+                threshold = 0.25
 
             self.clean_vertically(spectrogram, threshold)
             self.clean_horizontally(spectrogram, threshold)
@@ -288,6 +283,7 @@ class Generator():
             spectrogram[spectrogram < threshold] = 0
 
         return spectrogram
+
 
     def clean_vertically(self, spectrogram, threshold):
         """
@@ -305,15 +301,17 @@ class Generator():
             if spectrogram[0, :, max_time].max() > threshold:
                 max_time += 1
 
-            min_max = spectrogram[0, min_time, :].max()
-            max_max = spectrogram[0, max_time, :].max()
-
-            if min_time == -1 or max_time == 170:
+            if min_time == -1:
                 min_time = 0
-                max_time = 169
                 min_max = 0
+            else: 
+                min_max = spectrogram[0, :, min_time].max()
+
+            if max_time == 170:
+                max_time = 169
                 max_max = 0
-                break
+            else:
+                max_max = spectrogram[0, :, max_time].max()
 
             p = max(min_max, max_max)
         
@@ -337,15 +335,20 @@ class Generator():
             if spectrogram[0, max_time, :].max() > threshold:
                 max_time += 1
 
-            min_max = spectrogram[0, min_time, :].max()
-            max_max = spectrogram[0, max_time, :].max()
 
-            if min_time == -1 or max_time == 140:
+            if min_time == -1:
                 min_time = 0
-                max_time = 139
                 min_max = 0
+            else:
+                min_max = spectrogram[0, min_time, :].max()
+
+            if max_time == 140:
+                max_time = 139
                 max_max = 0
-                break
+            else: 
+                max_max = spectrogram[0, max_time, :].max()
+
+
 
             p = max(min_max, max_max)
             
