@@ -4,24 +4,27 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-def testGenerator():
+def testGenerator(testing):
     generator = Generator()
-    generator.generate("Wandering_Line", 2, clean=True)
-    generator.save_as_png("src/data/sanity_images")
-    generator.save_as_hdf5("src/data/sanity_images", "mydata", clear_queue=True)
 
-def testRest():
-    filepath = "src/data/sanity_images/mydata.hdf5"
+    for test in testing:
+        generator.generate(test, 10, clean=True)
+        generator.save_as_png("src/data/sanity_images")
+        generator.save_as_hdf5("src/data/sanity_images", test, clear_queue=True)
 
-    channel1 = "Wandering_Line_timeseries_0"
+def testRest(testing):
 
-    strain = TimeSeries.read(filepath, channel1)
-    strain.sample_rate = 4096
-    plt.plot(strain, 'forestgreen')
-    plt.xlabel("Time (Seconds)")
-    plt.savefig("src/data/sanity_images/Wandering_Line_timeseries.png")
-    plt.close()
+    for test in testing:
+        filepath = f"src/data/sanity_images/{test}.hdf5"
 
+        channel1 = f"{test}_timeseries_0"
+
+        strain = TimeSeries.read(filepath, channel1)
+        strain.sample_rate = 4096
+        plt.plot(strain, 'forestgreen')
+        plt.xlabel("Time (Seconds)")
+        plt.savefig(f"src/data/sanity_images/{test}_timeseries.png")
+        plt.close()
 
 def testSpectrogram():
     filepath = "src/data/sanity_images/mydata.hdf5"
@@ -45,8 +48,16 @@ def testSpectrogram():
     plt.show()
 
 if __name__ == "__main__":
-    testGenerator()
-    testRest()
+    all = ["1080Lines", "Extremely_Loud", "Helix", "Light_Modulation",
+            "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle",
+            "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
+
+    testing = ["Paired_Doves", "Extremely_Loud", "Light_Modulation", "Air_Compressor", "Low_Frequency_Burst", "Low_Frequency_Lines"]
+
+    testGenerator(testing)
+    testRest(testing)
     #testSpectrogram()
+
+    # NO GLITCH AND NONE OF THE ABOVE SHOULD NOT EVEN BE OPTIONS
 
     

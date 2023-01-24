@@ -266,41 +266,91 @@ class Generator():
             A spectrogram of the same shape, which has been cleaned of noise.
         """
 
-        leftover = ["1080Lines", "Extremely_Loud", "Helix", "Light_Modulation", "No_Glitch", "None_of_the_Above", 
-                    "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle"]
-        both = ["Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
-        vertical_only = ["1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte"]
+        both = ["Paired_Doves", "Extremely_Loud", "Light_Modulation", "Air_Compressor", "Low_Frequency_Burst", "Low_Frequency_Lines"
+            "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Power_Line"]
+        other = ["1080Lines", "Helix", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle"]
 
-        if (glitch in vertical_only):
+        #check again:
+        # air compressor
+        # extremely loud
+        # light modulation
+        # low freq burst
+        # low freq lines
+        # paired doves
+
+        if glitch in both: 
             
-            threshold = 0.3
+            threshold = 0.30
 
-            indmax = np.unravel_index(np.argmax(spectrogram, axis=None), spectrogram.shape)
-            min_time = max_time = indmax[2]
-            p = spectrogram[indmax]
-            
-            # Find the upper and lower bounds of the glitch
-            while (p > threshold):
+            self.clean_vertically(spectrogram, threshold)
+            self.clean_horizontally(spectrogram, threshold)
 
-                if spectrogram[0, :, min_time].max() > threshold:
-                    min_time -= 1
-                
-                if spectrogram[0, :, max_time].max() > threshold:
-                    max_time += 1
-
-                if min_time == -1 or max_time == 170:
-                    min_time = 0
-                    max_time = 169
-                    break
-
-                p = max(spectrogram[0, :, min_time].max(), spectrogram[0, :, max_time].max())
-            
-
-            spectrogram[0, :, 0:min_time] = 0
-            spectrogram[0, :, max_time:] = 0
             spectrogram[spectrogram < threshold] = 0
 
         return spectrogram
+
+    def clean_vertically(self, spectrogram, threshold):
+        """
+        Helper function to clean_spectrogram that removes all extra noise from the left and right hand sides of the glitch (cleaning columns)
+        """
+        indmax = np.unravel_index(np.argmax(spectrogram, axis=None), spectrogram.shape)
+        min_time = max_time = indmax[2]
+        p = spectrogram[indmax]
+            
+        # Find the upper and lower bounds of the glitch
+        while (p > threshold):
+            if spectrogram[0, :, min_time].max() > threshold:
+                min_time -= 1
+                
+            if spectrogram[0, :, max_time].max() > threshold:
+                max_time += 1
+
+            min_max = spectrogram[0, min_time, :].max()
+            max_max = spectrogram[0, max_time, :].max()
+
+            if min_time == -1 or max_time == 170:
+                min_time = 0
+                max_time = 169
+                min_max = 0
+                max_max = 0
+                break
+
+            p = max(min_max, max_max)
+        
+        spectrogram[0, :, 0:min_time] = 0
+        spectrogram[0, :, max_time:] = 0    
+
+
+    def clean_horizontally(self, spectrogram, threshold):
+        """
+        Helper function to clean_spectrogram that removes all extra noise from the top and bottom of the glitch (cleaning rows)
+        """
+        indmax = np.unravel_index(np.argmax(spectrogram, axis=None), spectrogram.shape)
+        min_time = max_time = indmax[1]
+        p = spectrogram[indmax]
+            
+            # Find the upper and lower bounds of the glitch
+        while (p > threshold):
+            if spectrogram[0, min_time, :].max() > threshold:
+                min_time -= 1
+                
+            if spectrogram[0, max_time, :].max() > threshold:
+                max_time += 1
+
+            min_max = spectrogram[0, min_time, :].max()
+            max_max = spectrogram[0, max_time, :].max()
+
+            if min_time == -1 or max_time == 140:
+                min_time = 0
+                max_time = 139
+                min_max = 0
+                max_max = 0
+                break
+
+            p = max(min_max, max_max)
+            
+        spectrogram[0, 0:min_time, :] = 0
+        spectrogram[0, max_time:, :] = 0
     
     
     def clear_queue(self):
