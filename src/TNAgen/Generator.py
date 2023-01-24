@@ -270,9 +270,12 @@ class Generator():
                 "Low_Frequency_Burst", "Light_Modulation"]
 
         both = ["Paired_Doves", "Extremely_Loud", "Air_Compressor", "Low_Frequency_Lines", "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Power_Line"]
-        recurring_horizontally = other
-        recurring_vertically = []
+        recurring_horizontally = ["Scattered_Light", "Wandering_Line", "Violin_Mode"]
+        recurring_vertically = ["1080Lines", "Low_Frequency_Burst", "Repeating_Blips",  "Scratchy", "Whistle"]
+        neither = ["Light_Modulation", "Helix", "Whistle"]
 
+        # 1080 Lines timeseries
+        # Light Modulation, Violin Mode, Whistle
 
 
 
@@ -287,6 +290,11 @@ class Generator():
 
         if glitch in recurring_horizontally:
             threshold = 0.30
+
+            if glitch == "Violin_Mode":
+                spectrogram[0, 50:, :] = 0
+                threshold = 0.25
+
             self.clean_vertically(spectrogram, threshold)
             spectrogram[spectrogram < threshold] = 0
 
@@ -294,7 +302,17 @@ class Generator():
             threshold = 0.30
             self.clean_horizontally(spectrogram, threshold)
             spectrogram[spectrogram < threshold] = 0
-            
+        
+        if glitch in neither: 
+            threshold = 0.3
+
+            if glitch == "Whistle":
+                threshold = 0.25
+
+            spectrogram[spectrogram < threshold] = 0
+
+
+
         return spectrogram
 
 
