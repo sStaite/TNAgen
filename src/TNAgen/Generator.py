@@ -266,18 +266,12 @@ class Generator():
             A spectrogram of the same shape, which has been cleaned of noise.
         """
 
-        other = ["1080Lines", "Helix", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle", 
-                "Low_Frequency_Burst", "Light_Modulation"]
-
         both = ["Paired_Doves", "Extremely_Loud", "Air_Compressor", "Low_Frequency_Lines", "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Power_Line"]
         recurring_horizontally = ["Scattered_Light", "Wandering_Line", "Violin_Mode"]
         recurring_vertically = ["1080Lines", "Low_Frequency_Burst", "Repeating_Blips",  "Scratchy", "Whistle"]
         neither = ["Light_Modulation", "Helix", "Whistle"]
 
         # 1080 Lines timeseries
-        # Light Modulation, Violin Mode, Whistle
-
-
 
         if glitch in both: 
             threshold = 0.30
