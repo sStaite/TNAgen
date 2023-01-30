@@ -195,13 +195,13 @@ class Generator():
 
     def save_as_hdf5(self, path, name="timeseries", noise=True, length="Default", position=None, clear_queue=False):
         """
-        Saves the queue of artifacts in a h5 file. The snippets are 2 * num of glitches seconds long, unless specified otherwise.
+        Saves the queue of artifacts in a h5 file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
 
         Args:
             path: Folder where the h5 file should be created.
             name (String): Name for the h5 file (Default: "timeseries")
             noise: If the user wants noise to be saved with the timeseries
-            length: The length (in seconds) of the snippet. Default is 2 * the number of glitches given.
+            length: The length (in seconds) of the snippet. Default is 1/3 * the number of glitches given.
             position: The positions of the start of glitches, given in the form of a numpy array in seconds; must be of size len(self.glitches)
                         Default=None: The glitches will be distributed randomly 
             clear_queue: Boolean value for if the queue will be cleared after the images are saved. (Default: False)
@@ -222,7 +222,7 @@ class Generator():
 
         # Create a timeseries which just has gaussian noise for our specific PSD
         if length == "Default":
-            length = 2 * len(self.curr_array)
+            length = len(self.curr_array) // 3
 
         b = np.arange(start=0, stop=length, step=(1/4096))
 
@@ -259,7 +259,6 @@ class Generator():
         # Save dataset
 
         timeseries = np.swapaxes(timeseries, 0, 1)[1]
-        print(timeseries)
         f.create_dataset(f"/timeseries", data=timeseries, compression="gzip")
         f.flush()
         f.close()
