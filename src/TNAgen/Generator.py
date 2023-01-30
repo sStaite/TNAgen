@@ -193,24 +193,59 @@ class Generator():
             self.clear_queue()
 
 
-    def save_as_hdf5(self, path, name="timeseries", clear_queue=False):
+    def save_as_hdf5(self, path, name="timeseries", noise="False", length="Default", position=None, clear_queue=False):
         """
-        Saves the queue of artifacts in a h5 file. The snippets are 2 seconds long.
+        Saves the queue of artifacts in a h5 file. The snippets are 2 * num of glitches seconds long, unless specified otherwise.
 
         Args:
             path: Folder where the h5 file should be created.
             name (String): Name for the h5 file (Default: "timeseries")
+            noise: If the user wants noise to be saved with the timeseries
+            length: The length (in seconds) of the snippet. Default is 2 * the number of glitches given.
+            position: The positions of the start of glitches, given in the form of a numpy array in seconds; must be of size len(self.glitches)
+                        Default=None: The glitches will be distributed randomly 
             clear_queue: Boolean value for if the queue will be cleared after the images are saved. (Default: False)
         """
 
+        # Check there are glitches generated.
         if len(self.curr_array) == 0:
-            print("There are currently no generated images.")
+            print("There are currently no generated glitches.")
+            return
+        
+        if len(self.glitches) != len(position):
+            print("Position array is not the same length as the number of glitches.")
             return
 
         filepath = path + f"/{name}.hdf5"
 
         f = h5py.File(filepath, "w")
 
+        # Create a timeseries which just has gaussian noise for our specific PSD
+        if (length == "Default"):
+            timeseries = zip(np.arange(start=0, stop=2 * len(self.glitches), step=(1/4096)), self.gaussian_data(self.PSD))
+        else:
+            timeseries = zip(np.arange(start=0, stop=length, step=(1/4096)), self.gaussian_data(self.PSD))
+    
+
+        count_dict = {string: 0 for string in set(self.curr_glitch)}
+        for i in range(len(self.curr_array)):
+            # First convert the spectrogram data to timeseries data
+            index = count_dict[self.curr_glitch[i]]
+            count_dict[self.curr_glitch[i]] += 1
+            curr_time_series = self.convert_to_timeseries(self.curr_array[i]) * (1/0.04)
+
+            if position is None:
+                curr_pos = np.random.choice(timeseries[0])
+            else:
+                curr_pos = position[i]
+            
+            
+
+            self.__timer("Saving timeseries:", i+1, len(self.curr_array))
+            index+=1
+
+
+        """
         count_dict = {string: 0 for string in set(self.curr_glitch)}
 
         for i in range(len(self.curr_array)):
@@ -226,6 +261,7 @@ class Generator():
             f.create_dataset(f"/{self.curr_glitch[i]}_timeseries_{index}", data=time_series, compression="gzip")
 
             index+=1
+        """
 
         f.flush()
         f.close()
@@ -396,6 +432,10 @@ class Generator():
             print()
     
     
+    def gaussian_data(self, PSD):
+        return 0
+
+
     def calculate_snr(self, freqsignal, PSD):
         
         """
@@ -409,10 +449,10 @@ class Generator():
         """
 
         fs = 140 
-        PSD = PSD[0:2380:17][:, 0]
+        PSD = np.array([PSD[0:2380:17][:, 0] for x in range(170)])
+        PSD = np.swapaxes(PSD, 0, 1)
 
         SNRsq = 4 * fs * np.sum(pow(abs(freqsignal),2.)/ PSD)
         SNR = np.sqrt(SNRsq)
 
-        print(SNR)
         return SNR
