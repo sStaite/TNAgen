@@ -193,7 +193,7 @@ class Generator():
             self.clear_queue()
 
 
-    def save_as_hdf5(self, path, name="timeseries", noise="False", length="Default", position=None, clear_queue=False):
+    def save_as_hdf5(self, path, name="timeseries", noise=False, length="Default", position=None, clear_queue=False):
         """
         Saves the queue of artifacts in a h5 file. The snippets are 2 * num of glitches seconds long, unless specified otherwise.
 
@@ -221,10 +221,17 @@ class Generator():
         f = h5py.File(filepath, "w")
 
         # Create a timeseries which just has gaussian noise for our specific PSD
-        if (length == "Default"):
-            timeseries = zip(np.arange(start=0, stop=2 * len(self.glitches), step=(1/4096)), self.gaussian_data(self.PSD))
-        else:
-            timeseries = zip(np.arange(start=0, stop=length, step=(1/4096)), self.gaussian_data(self.PSD))
+        if length == "Default":
+            length = 2 * len(self.glitches)
+
+        b = np.arange(start=0, stop=length, step=(1/4096))
+
+        if noise:
+            n = self.gaussian_data(length, self.PSD)
+        else: 
+            n = np.zeros(length * 4096)
+
+        timeseries = zip(b, n)
     
 
         count_dict = {string: 0 for string in set(self.curr_glitch)}
@@ -234,35 +241,22 @@ class Generator():
             count_dict[self.curr_glitch[i]] += 1
             curr_time_series = self.convert_to_timeseries(self.curr_array[i]) * (1/0.04)
 
+            # Find the starting position of the glitch
             if position is None:
                 curr_pos = np.random.choice(timeseries[0])
             else:
                 curr_pos = position[i]
             
-            
+            # Add the glitch in
+            for i in range(len(curr_time_series)):
+                timeseries[1][curr_pos + i] += curr_time_series[i]
+
 
             self.__timer("Saving timeseries:", i+1, len(self.curr_array))
             index+=1
 
-
-        """
-        count_dict = {string: 0 for string in set(self.curr_glitch)}
-
-        for i in range(len(self.curr_array)):
-            # First convert the spectrogram data to timeseries data
-
-            index = count_dict[self.curr_glitch[i]]
-            count_dict[self.curr_glitch[i]] += 1
-
-            time_series = self.convert_to_timeseries(self.curr_array[i]) * (1/0.04)
-
-            self.__timer("Saving timeseries:", i+1, len(self.curr_array))
-
-            f.create_dataset(f"/{self.curr_glitch[i]}_timeseries_{index}", data=time_series, compression="gzip")
-
-            index+=1
-        """
-
+        # Save dataset
+        f.create_dataset(f"/timeseries", data=timeseries, compression="gzip")
         f.flush()
         f.close()
 
