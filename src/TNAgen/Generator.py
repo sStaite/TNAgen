@@ -193,7 +193,7 @@ class Generator():
             self.clear_queue()
 
 
-    def save_as_hdf5(self, path, name="timeseries", noise=False, length="Default", position=None, clear_queue=False):
+    def save_as_hdf5(self, path, name="timeseries", noise=True, length="Default", position=None, clear_queue=False):
         """
         Saves the queue of artifacts in a h5 file. The snippets are 2 * num of glitches seconds long, unless specified otherwise.
 
@@ -212,7 +212,7 @@ class Generator():
             print("There are currently no generated glitches.")
             return
         
-        if len(self.glitches) != len(position):
+        if position is not None and (len(self.curr_array) != len(position)):
             print("Position array is not the same length as the number of glitches.")
             return
 
@@ -222,7 +222,7 @@ class Generator():
 
         # Create a timeseries which just has gaussian noise for our specific PSD
         if length == "Default":
-            length = 2 * len(self.glitches)
+            length = 2 * len(self.curr_array)
 
         b = np.arange(start=0, stop=length, step=(1/4096))
 
@@ -231,8 +231,7 @@ class Generator():
         else: 
             n = np.zeros(length * 4096)
 
-        timeseries = zip(b, n)
-    
+        timeseries = np.array(list(zip(b, n)))
 
         count_dict = {string: 0 for string in set(self.curr_glitch)}
         for i in range(len(self.curr_array)):
@@ -243,19 +242,24 @@ class Generator():
 
             # Find the starting position of the glitch
             if position is None:
-                curr_pos = np.random.choice(timeseries[0])
+                curr_pos = np.random.choice(len(timeseries[:, 0]))
             else:
                 curr_pos = position[i]
             
             # Add the glitch in
             for i in range(len(curr_time_series)):
-                timeseries[1][curr_pos + i] += curr_time_series[i]
+                if (curr_pos + i >= length * 4096):
+                    break
+                timeseries[curr_pos + i, 1] += curr_time_series[i]
 
 
-            self.__timer("Saving timeseries:", i+1, len(self.curr_array))
+            #self.__timer("Saving timeseries:", i+1, len(self.curr_array))
             index+=1
 
         # Save dataset
+
+        timeseries = np.swapaxes(timeseries, 0, 1)[1]
+        print(timeseries)
         f.create_dataset(f"/timeseries", data=timeseries, compression="gzip")
         f.flush()
         f.close()

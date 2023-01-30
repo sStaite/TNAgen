@@ -8,23 +8,22 @@ def testGenerator(testing):
     generator = Generator()
 
     for test in testing:
-        generator.generate(test, 1, clean=False)
-        generator.save_as_png("src/data/sanity_images")
-        generator.save_as_hdf5("src/data/sanity_images", test, clear_queue=True)
+        generator.generate(test, 10, clean=False)
+        #generator.save_as_png("src/data/sanity_images")
+
+    generator.save_as_hdf5(path="src/data/sanity_images", noise=False, clear_queue=True)
+
 
 def testRest(testing):
 
-    for test in testing:
-        filepath = f"src/data/sanity_images/{test}.hdf5"
+    filepath = "src/data/sanity_images/timeseries.hdf5"
 
-        channel1 = f"{test}_timeseries_0"
-
-        strain = TimeSeries.read(filepath, channel1)
-        strain.sample_rate = 4096
-        plt.plot(strain, 'forestgreen')
-        plt.xlabel("Time (Seconds)")
-        plt.savefig(f"src/data/sanity_images/{test}_timeseries.png")
-        plt.close()
+    strain = TimeSeries.read(filepath)
+    strain.sample_rate = 4096
+    plt.plot(strain, 'forestgreen')
+    plt.xlabel("Time (Seconds)")
+    plt.savefig(f"src/data/sanity_images/timeseries.png")
+    plt.close()
 
 def testSpectrogram():
     filepath = "src/data/sanity_images/mydata.hdf5"
@@ -52,10 +51,10 @@ if __name__ == "__main__":
             "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle",
             "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
 
-    testing = ["Blip"]
+    testing = ["Blip", "Chirp", "Tomte"]
 
     testGenerator(testing)
-    #testRest(testing)
+    testRest(testing)
     #testSpectrogram()
 
     # NO GLITCH AND NONE OF THE ABOVE SHOULD NOT EVEN BE OPTIONS, EXTREMELY LOUD PROBABLY TOO!
