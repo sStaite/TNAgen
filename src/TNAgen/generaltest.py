@@ -52,10 +52,10 @@ if __name__ == "__main__":
             "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle",
             "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
 
-    testing = ["Blip", "Koi_Fish"]
+    testing = ["Blip"]
 
     testGenerator(testing)
-    testRest(testing)
+    #testRest(testing)
     #testSpectrogram()
 
     # NO GLITCH AND NONE OF THE ABOVE SHOULD NOT EVEN BE OPTIONS, EXTREMELY LOUD PROBABLY TOO!
