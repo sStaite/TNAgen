@@ -45,6 +45,7 @@ class Generator():
         # Get the list of glitches
         self.label_df = pd.read_csv('src/data/array_to_label_conversion.csv')
         self.glitches = self.label_df['label'].tolist()
+        self.PSD = np.loadtxt('src/data/ALIGO_noise_curve.txt')
 
 
     def generate(self, glitch, n_images_to_generate, clean=False):
@@ -266,13 +267,12 @@ class Generator():
             A spectrogram of the same shape, which has been cleaned of noise.
         """
 
+
+        # First, get rid of all background noise
         both = ["Paired_Doves", "Extremely_Loud", "Air_Compressor", "Low_Frequency_Lines", "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Power_Line"]
         recurring_horizontally = ["Scattered_Light", "Wandering_Line", "Violin_Mode"]
         recurring_vertically = ["1080Lines", "Low_Frequency_Burst", "Repeating_Blips",  "Scratchy", "Whistle"]
         neither = ["Light_Modulation", "Helix", "Whistle"]
-
-        # 1080 Lines timeseries
-
         if glitch in both: 
             threshold = 0.30
             if glitch in ["Low_Frequency_Lines", "Paired_Doves"]: 
@@ -304,9 +304,7 @@ class Generator():
                 threshold = 0.25
 
             spectrogram[spectrogram < threshold] = 0
-
-
-
+        
         return spectrogram
 
 
@@ -396,3 +394,25 @@ class Generator():
 
         if curr == total:
             print()
+    
+    
+    def calculate_snr(self, freqsignal, PSD):
+        
+        """
+        #calculate SNR
+
+        for i in range(170):
+            self.calculate_snr(spectrogram[0][:, i], self.PSD)
+
+        # spectrogram = 140 data points, 8 - 2048 hz
+        # PSD = 3000 data points, 9 - 8192 hz (every 17th, up to 2380?)
+        """
+
+        fs = 140 
+        PSD = PSD[0:2380:17][:, 0]
+
+        SNRsq = 4 * fs * np.sum(pow(abs(freqsignal),2.)/ PSD)
+        SNR = np.sqrt(SNRsq)
+
+        print(SNR)
+        return SNR
