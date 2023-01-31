@@ -8,7 +8,7 @@ def testGenerator(testing):
     generator = Generator()
 
     for test in testing:
-        generator.generate(test, 20, clean=True)
+        generator.generate(test, 10, clean=True)
         #generator.save_as_png("src/data/sanity_images")
 
     generator.save_as_hdf5(path="src/data/sanity_images", noise=False, clear_queue=True)
@@ -54,7 +54,7 @@ if __name__ == "__main__":
             "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle",
             "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
 
-    testing = ["Blip", "Koi_Fish", "Helix"]
+    testing = ["Koi_Fish"]
 
     testGenerator(testing)
     testRest(testing)

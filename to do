@@ -1,14 +1,12 @@
-comment on code
-readme 
-readthedocs
+To do:
+    Resample noise curve
+    Calculate SNR
+    Gaussian noise generation 
+    Automate glitch cleaning
+    Saving files in gwf format 
 
-cutting edges off glitches + cleaning up
-look at .gwf format 
+Misc:
+    Comment on code
+    Clean up code
+    Beautify readthedocs
 
-gwpy website when it is back working
-
-generating: 30 images per second
-saving as png: 116.6 images per second
-convert to hdf5 and saving: 3.14 images per second
-
-to generate and convert to hdf5: 1000 images takes almost 6 minutes
