@@ -45,7 +45,7 @@ class Generator():
         # Get the list of glitches
         self.label_df = pd.read_csv('src/data/array_to_label_conversion.csv')
         self.glitches = self.label_df['label'].tolist()
-        self.PSD = np.loadtxt('src/data/ALIGO_noise_curve.txt')
+        self.PSD = np.swapaxes(np.loadtxt('src/data/ALIGO_noise_curve.txt'), 0, 1)
 
 
     def generate(self, glitch, n_images_to_generate, clean=False):
@@ -86,13 +86,13 @@ class Generator():
             im = im[:, 0:140, 0:170] 
             
             if clean:
-                im = self.clean_spectrogram(im, glitch)
+                im = self._clean_spectrogram(im, glitch)
 
             np_array[i] = im 
 
             label_list.append(glitch)
 
-            self.__timer("Generating images:", i+1, n_images_to_generate)
+            self._timer("Generating images:", i+1, n_images_to_generate)
         
         # Update the queue or create it if it does not exist
         if len(self.curr_array) == 0:
@@ -143,12 +143,12 @@ class Generator():
                 im = im[:, 0:140, 0:170] 
 
                 if clean:
-                    im = self.clean_spectrogram(im, glitch)
+                    im = self._clean_spectrogram(im, glitch)
 
                 np_arrays[index] = im
                 label_list.append(glitch)
 
-                self.__timer("Generating images:", index+1, n_images_to_generate*len(self.glitches))
+                self._timer("Generating images:", index+1, n_images_to_generate*len(self.glitches))
                 index+=1
 
 
@@ -185,12 +185,12 @@ class Generator():
             
             plt.imsave(path + f"/{self.curr_glitch[i]}_{index}.png", self.curr_array[i])
 
-            self.__timer("Saving images:    ", i+1, len(self.curr_array))
+            self._timer("Saving images:    ", i+1, len(self.curr_array))
 
             index+=1
 
         if clear_queue:
-            self.clear_queue()
+            self._clear_queue()
 
 
     def save_as_hdf5(self, path, name="timeseries", noise=True, length="Default", position=None, clear_queue=False):
@@ -227,7 +227,7 @@ class Generator():
         b = np.arange(start=0, stop=length, step=(1/4096))
 
         if noise:
-            n = self.gaussian_data(length, self.PSD)
+            n = self._gaussian_data(length, self.PSD)
         else: 
             n = np.zeros(length * 4096)
 
@@ -238,7 +238,10 @@ class Generator():
             # First convert the spectrogram data to timeseries data
             index = count_dict[self.curr_glitch[i]]
             count_dict[self.curr_glitch[i]] += 1
-            curr_time_series = self.convert_to_timeseries(self.curr_array[i]) * (1/0.04)
+            curr_time_series = self._convert_to_timeseries(self.curr_array[i]) * (1/0.04)
+
+            # Then we need to calculate the SNR
+            snr = self._calculate_snr(curr_time_series, self.PSD)
 
             # Find the starting position of the glitch
             if position is None:
@@ -264,10 +267,10 @@ class Generator():
         f.close()
 
         if clear_queue:
-            self.clear_queue()
+            self._clear_queue()
 
 
-    def convert_to_timeseries(self, spectrogram):
+    def _convert_to_timeseries(self, spectrogram):
         """
         Converts the given spectrogram into a timeseries.
 
@@ -289,7 +292,7 @@ class Generator():
         return time_series
 
 
-    def clean_spectrogram(self, spectrogram, glitch):
+    def _clean_spectrogram(self, spectrogram, glitch):
         """
         Removes all datapoints below a certain threshold.
 
@@ -311,8 +314,8 @@ class Generator():
             if glitch in ["Low_Frequency_Lines", "Paired_Doves"]: 
                 threshold = 0.25
 
-            self.clean_vertically(spectrogram, threshold)
-            self.clean_horizontally(spectrogram, threshold)
+            self._clean_vertically(spectrogram, threshold)
+            self._clean_horizontally(spectrogram, threshold)
             spectrogram[spectrogram < threshold] = 0
 
         if glitch in recurring_horizontally:
@@ -322,12 +325,12 @@ class Generator():
                 spectrogram[0, 50:, :] = 0
                 threshold = 0.25
 
-            self.clean_vertically(spectrogram, threshold)
+            self._clean_vertically(spectrogram, threshold)
             spectrogram[spectrogram < threshold] = 0
 
         if glitch in recurring_vertically:
             threshold = 0.30
-            self.clean_horizontally(spectrogram, threshold)
+            self._clean_horizontally(spectrogram, threshold)
             spectrogram[spectrogram < threshold] = 0
         
         if glitch in neither: 
@@ -341,7 +344,7 @@ class Generator():
         return spectrogram
 
 
-    def clean_vertically(self, spectrogram, threshold):
+    def _clean_vertically(self, spectrogram, threshold):
         """
         Helper function to clean_spectrogram that removes all extra noise from the left and right hand sides of the glitch (cleaning columns)
         """
@@ -375,7 +378,7 @@ class Generator():
         spectrogram[0, :, max_time:] = 0    
 
 
-    def clean_horizontally(self, spectrogram, threshold):
+    def _clean_horizontally(self, spectrogram, threshold):
         """
         Helper function to clean_spectrogram that removes all extra noise from the top and bottom of the glitch (cleaning rows)
         """
@@ -412,7 +415,7 @@ class Generator():
         spectrogram[0, max_time:, :] = 0
     
     
-    def clear_queue(self):
+    def _clear_queue(self):
         """
         Clears the current queue of artifacts.
         """
@@ -420,7 +423,7 @@ class Generator():
         self.curr_glitch = []
             
     
-    def __timer(self, msg, curr, total):
+    def _timer(self, msg, curr, total):
         bars = curr*20 // total
         digits = len(str(total))
         print(msg + " " + str(curr).rjust(digits, " ") + f"/{total} [" + "-"*bars + " "*(20-bars) + "]", end="\r")
@@ -429,11 +432,11 @@ class Generator():
             print()
     
     
-    def gaussian_data(self, PSD):
+    def _gaussian_data(self, PSD):
         return 0
 
 
-    def calculate_snr(self, freqsignal, PSD):
+    def _calculate_snr(self, timeseries, PSD):
         
         """
         #calculate SNR
@@ -445,11 +448,18 @@ class Generator():
         # PSD = 3000 data points, 9 - 8192 hz (every 17th, up to 2380?)
         """
 
-        fs = 140 
-        PSD = np.array([PSD[0:2380:17][:, 0] for x in range(170)])
-        PSD = np.swapaxes(PSD, 0, 1)
+        # Resample PSD if that is needed 
+        df = (4096-10)/140
+        new_x = np.arange(start=10, stop=4096 + df, step=df)
+        f = interpolate.interp1d(PSD[0], PSD[1])
+        new_psd = f(new_x)
 
-        SNRsq = 4 * fs * np.sum(pow(abs(freqsignal),2.)/ PSD)
+        # Convert the timeseries into freqsignal
+        q = interpolate.interp1d(np.arange(start=10, stop=4097), np.fft.rfft(timeseries)[10:])
+        sig = q(new_x)
+
+        SNRsq = 4 * df * np.sum(pow(abs(sig),2.)/ new_psd)
         SNR = np.sqrt(SNRsq)
 
+        print(SNR)
         return SNR
