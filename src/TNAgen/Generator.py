@@ -238,7 +238,7 @@ class Generator():
             # First convert the spectrogram data to timeseries data
             index = count_dict[self.curr_glitch[i]]
             count_dict[self.curr_glitch[i]] += 1
-            curr_time_series = self._convert_to_timeseries(self.curr_array[i]) * (1/0.04)
+            curr_time_series = self._convert_to_timeseries(self.curr_array[i])
 
             # Then we need to calculate the SNR
             snr = self._calculate_snr(curr_time_series, self.PSD)
@@ -439,24 +439,19 @@ class Generator():
     def _calculate_snr(self, timeseries, PSD):
         
         """
-        #calculate SNR
-
-        for i in range(170):
-            self.calculate_snr(spectrogram[0][:, i], self.PSD)
-
-        # spectrogram = 140 data points, 8 - 2048 hz
-        # PSD = 3000 data points, 9 - 8192 hz (every 17th, up to 2380?)
+        Calculate's the Signal to noise ratio for a given glitch.
         """
 
-        # Resample PSD if that is needed 
-        df = (4096-10)/140
+        sample_rate = 4096
+
+        # Resample PSD as that is needed 
+        df = (4096-10)/4096
         new_x = np.arange(start=10, stop=4096 + df, step=df)
         f = interpolate.interp1d(PSD[0], PSD[1])
         new_psd = f(new_x)
 
         # Convert the timeseries into freqsignal
-        q = interpolate.interp1d(np.arange(start=10, stop=4097), np.fft.rfft(timeseries)[10:])
-        sig = q(new_x)
+        sig = np.fft.rfft(timeseries)
 
         SNRsq = 4 * df * np.sum(pow(abs(sig),2.)/ new_psd)
         SNR = np.sqrt(SNRsq)
