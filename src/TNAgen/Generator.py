@@ -191,7 +191,7 @@ class Generator():
             self._clear_queue()
 
 
-    def save_as_timeseries(self, path, name="timeseries", noise=True, length="Default", position=None, clear_queue=False):
+    def save_as_timeseries(self, path, name="timeseries", noise=True, length="Default", position=None, SNR=10, clear_queue=False):
         """
         Saves the queue of artifacts in a h5 file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
 
@@ -202,6 +202,7 @@ class Generator():
             length: The length (in seconds) of the snippet. Default is 1/3 * the number of glitches given.
             position: The positions of the start of glitches, given in the form of a numpy array in seconds; must be of size len(self.glitches)
                         Default=None: The glitches will be distributed randomly 
+            SNR: The Signal to noise ratio that is wanted for the glitches. (Default: 10)
             clear_queue: Boolean value for if the queue will be cleared after the images are saved. (Default: False)
         """
 
@@ -238,8 +239,8 @@ class Generator():
             count_dict[self.curr_glitch[i]] += 1
             curr_time_series = self._convert_to_timeseries(self.curr_array[i])
 
-            # Then we need to calculate the SNR
-            #snr = self._calculate_snr(curr_time_series, self.PSD)
+            # Then we need to adjust the amplitude of the timeseries for the required SNR.
+            curr_time_series = self._adjust_amplitude(curr_time_series, self.PSD, SNR)
 
             # Find the starting position of the glitch
             if position is None:
@@ -250,7 +251,6 @@ class Generator():
             # Add the glitch in
             # This code just lets the data from the glitch be put anywhere on the timeseries
             for i in range(len(curr_time_series)):
-                print(curr_pos, i, length * 4096)
                 if (curr_pos + i >= length * 4096):
                     break
                 if (curr_pos + i >= 0):
@@ -432,12 +432,15 @@ class Generator():
             print()
     
 
-    def _calculate_snr(self, timeseries, PSD):
+    def _adjust_amplitude(self, timeseries, PSD, requiredSNR):
         """
         Calculate's the Signal to noise ratio for a given glitch.
         """
 
         fs = 4096
+
+        amp = 1e-20 # Give the glitch a realistic amplitude
+        timeseries *= amp
 
         # Convert the timeseries into freqsignal
         freq_signal = np.fft.rfft(timeseries) / fs 
@@ -447,9 +450,6 @@ class Generator():
         freq_signal = freq_signal[20:4096]
         freq_values = freq_values[20:4096]
 
-        amp = 1e-20 # Give the glitch a realistic amplitude
-        freq_signal = freq_signal * amp
-
         # Resample PSD  
         f = interpolate.interp1d(PSD[0], PSD[1])
         new_psd = f(freq_values)
@@ -457,12 +457,14 @@ class Generator():
         # Find the frequency spacing
         df = freq_values[1] - freq_values[0]
 
-        # Finally calculate SNR 
+        # Calculate current SNR 
         SNRsq = 4 * df * np.sum(pow(abs(freq_signal),2.)/ new_psd)
         SNR = np.sqrt(SNRsq)
 
-        print(SNR)
-        return SNR
+        # Since all calculations are linear, we can just adjust timeseries to get SNR we need
+        timeseries *= requiredSNR/SNR 
+
+        return timeseries
 
       
     def _gaussian_data(self, PSD):
