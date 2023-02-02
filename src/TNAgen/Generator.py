@@ -7,9 +7,7 @@ import pandas as pd
 import librosa
 from scipy import signal, interpolate
 import h5py
-
-#n_images_to_generate = 100
-save_images = True
+import cv2
 
 class Generator():
     """
@@ -193,7 +191,7 @@ class Generator():
             self._clear_queue()
 
 
-    def save_as_hdf5(self, path, name="timeseries", noise=True, length="Default", position=None, clear_queue=False):
+    def save_as_timeseries(self, path, name="timeseries", noise=True, length="Default", position=None, clear_queue=False):
         """
         Saves the queue of artifacts in a h5 file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
 
@@ -222,14 +220,14 @@ class Generator():
 
         # Create a timeseries which just has gaussian noise for our specific PSD
         if length == "Default":
-            length = len(self.curr_array) // 3
+            length = np.ceil(len(self.curr_array)*4096 / 3) / 4096 
 
         b = np.arange(start=0, stop=length, step=(1/4096))
 
         if noise:
             n = self._gaussian_data(length, self.PSD)
         else: 
-            n = np.zeros(length * 4096)
+            n = np.zeros(int(length * 4096)) 
 
         timeseries = np.array(list(zip(b, n)))
 
@@ -241,26 +239,28 @@ class Generator():
             curr_time_series = self._convert_to_timeseries(self.curr_array[i])
 
             # Then we need to calculate the SNR
-            snr = self._calculate_snr(curr_time_series, self.PSD)
+            #snr = self._calculate_snr(curr_time_series, self.PSD)
 
             # Find the starting position of the glitch
             if position is None:
-                curr_pos = np.random.choice(len(timeseries[:, 0]))
+                curr_pos = np.random.choice(np.arange(len(timeseries[:, 0])) - len(curr_time_series) // 2)
             else:
                 curr_pos = position[i]
             
             # Add the glitch in
+            # This code just lets the data from the glitch be put anywhere on the timeseries
             for i in range(len(curr_time_series)):
+                print(curr_pos, i, length * 4096)
                 if (curr_pos + i >= length * 4096):
                     break
-                timeseries[curr_pos + i, 1] += curr_time_series[i]
+                if (curr_pos + i >= 0):
+                    timeseries[curr_pos + i, 1] += curr_time_series[i]
 
 
             #self.__timer("Saving timeseries:", i+1, len(self.curr_array))
             index+=1
 
         # Save dataset
-
         timeseries = np.swapaxes(timeseries, 0, 1)[1]
         f.create_dataset(f"/timeseries", data=timeseries, compression="gzip")
         f.flush()
@@ -431,30 +431,40 @@ class Generator():
         if curr == total:
             print()
     
-    
-    def _gaussian_data(self, PSD):
-        return 0
-
 
     def _calculate_snr(self, timeseries, PSD):
-        
         """
         Calculate's the Signal to noise ratio for a given glitch.
         """
 
-        sample_rate = 4096
-
-        # Resample PSD as that is needed 
-        df = (4096-10)/4096
-        new_x = np.arange(start=10, stop=4096 + df, step=df)
-        f = interpolate.interp1d(PSD[0], PSD[1])
-        new_psd = f(new_x)
+        fs = 4096
 
         # Convert the timeseries into freqsignal
-        sig = np.fft.rfft(timeseries)
+        freq_signal = np.fft.rfft(timeseries) / fs 
+        freq_values = np.fft.fftfreq(len(timeseries), d=1./fs)
+        
+        # Get only the frequencies between 10Hz and 2048Hz
+        freq_signal = freq_signal[20:4096]
+        freq_values = freq_values[20:4096]
 
-        SNRsq = 4 * df * np.sum(pow(abs(sig),2.)/ new_psd)
+        amp = 1e-20 # Give the glitch a realistic amplitude
+        freq_signal = freq_signal * amp
+
+        # Resample PSD  
+        f = interpolate.interp1d(PSD[0], PSD[1])
+        new_psd = f(freq_values)
+
+        # Find the frequency spacing
+        df = freq_values[1] - freq_values[0]
+
+        # Finally calculate SNR 
+        SNRsq = 4 * df * np.sum(pow(abs(freq_signal),2.)/ new_psd)
         SNR = np.sqrt(SNRsq)
 
         print(SNR)
         return SNR
+
+      
+    def _gaussian_data(self, PSD):
+        return 0
+

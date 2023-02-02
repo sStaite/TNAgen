@@ -63,5 +63,5 @@ generator.save_as_hdf5("path/to/file", "file2", clear_queue=True)
 ```
 
 ## Contributors
-5
+Seamus Staite, Jade Powell
 
