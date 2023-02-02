@@ -224,12 +224,7 @@ class Generator():
             length = np.ceil(len(self.curr_array)*4096 / 3) / 4096 
 
         b = np.arange(start=0, stop=length, step=(1/4096))
-
-        if noise:
-            n = self._gaussian_data(length, self.PSD)
-        else: 
-            n = np.zeros(int(length * 4096)) 
-
+        n = np.zeros(int(length * 4096)) 
         timeseries = np.array(list(zip(b, n)))
 
         count_dict = {string: 0 for string in set(self.curr_glitch)}
@@ -262,6 +257,10 @@ class Generator():
 
         # Save dataset
         timeseries = np.swapaxes(timeseries, 0, 1)[1]
+
+        if noise:
+            timeseries = self._add_gaussian_noise(timeseries, self.PSD, duration=length) 
+
         f.create_dataset(f"/timeseries", data=timeseries, compression="gzip")
         f.flush()
         f.close()
@@ -467,6 +466,31 @@ class Generator():
         return timeseries
 
       
-    def _gaussian_data(self, PSD):
-        return 0
+    def _add_gaussian_noise(self, timeseries, PSD, duration):
+        
+        fs = 4096
+        df = 1 / duration
+        f_min = 10
+
+        lo = int(f_min/df)
+        N_fd = np.round(fs * duration / 2.0 - lo)
+        Nt_noise = int(fs * duration)
+
+        # Resample PSD
+        freq_values = np.arange(10, 2048, df)
+        f = interpolate.interp1d(PSD[0], PSD[1])
+        PSD = f(freq_values)
+
+        # Now construct Gaussian data series
+        Real = np.random.normal(0,1,size=int(N_fd))*np.sqrt(PSD/(4.*df))
+        Imag = np.random.normal(0,1,size=int(N_fd))*np.sqrt(PSD/(4.*df))
+
+        # Create data series as data = real + i*imag
+        detData = (Real + 1j*Imag) 
+
+        # Convert back into time domain
+        time_domain_noise = np.fft.irfft(detData, n=Nt_noise) * fs   
+        timeseries += time_domain_noise
+
+        return timeseries
 

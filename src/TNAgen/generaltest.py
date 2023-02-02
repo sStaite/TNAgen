@@ -9,9 +9,9 @@ def testGenerator(testing):
 
     for test in testing:
         generator.generate(test, 10, clean=True)
-        generator.save_as_png("src/data/sanity_images")
+        #generator.save_as_png("src/data/sanity_images")
 
-    generator.save_as_timeseries(path="src/data/sanity_images", noise=False, clear_queue=True)
+    generator.save_as_timeseries(path="src/data/sanity_images", noise=True, SNR=10, clear_queue=True)
 
 
 def testRest(testing):
@@ -29,10 +29,9 @@ def testRest(testing):
 
 
 def testSpectrogram():
-    filepath = "src/data/sanity_images/mydata.hdf5"
-    channel1 = "Chirp_timeseries_0"
+    filepath = "src/data/sanity_images/timeseries.hdf5"
 
-    strain = TimeSeries.read(filepath, channel1)
+    strain = TimeSeries.read(filepath)
 
     fs = 4096
 
@@ -44,7 +43,7 @@ def testSpectrogram():
     plt.figure(figsize=(8.5, 7))
     spec_H1, freqs, bins, im = plt.specgram(strain, NFFT=NFFT, Fs=fs, window=window,
         noverlap=NOVL, cmap=spec_cmap, scale='linear',mode='magnitude')
-    plt.ylim(0,4096//2)
+    plt.ylim(10,4096//2)
     plt.xlabel('time (s)',fontsize=14)
     plt.ylabel('frequency (Hz)',fontsize=14)
     plt.show()
