@@ -9,9 +9,9 @@ def testGenerator(testing):
 
     for test in testing:
         generator.generate(test, 10, clean=True)
-        #generator.save_as_png("src/data/sanity_images")
+        generator.save_as_png("src/data/sanity_images")
 
-    generator.save_as_hdf5(path="src/data/sanity_images", noise=False, clear_queue=True)
+    generator.save_as_timeseries(path="src/data/sanity_images", noise=False, clear_queue=True)
 
 
 def testRest(testing):
