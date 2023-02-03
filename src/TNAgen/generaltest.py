@@ -1,5 +1,6 @@
 from Generator import Generator
 from gwpy.timeseries import TimeSeries
+from gwpy.plot import Plot
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,7 +9,7 @@ def testGenerator(testing):
     generator = Generator()
 
     for test in testing:
-        generator.generate(test, 10, clean=True)
+        generator.generate(test, 5, clean=True)
         #generator.save_as_png("src/data/sanity_images")
 
     generator.save_as_timeseries(path="src/data/sanity_images", noise=True, SNR=10, clear_queue=True)
@@ -16,17 +17,21 @@ def testGenerator(testing):
 
 def testRest(testing):
 
-    filepath = "src/data/sanity_images/timeseries.hdf5"
+    filepath = "src/data/sanity_images/timeseries.gwf"
+    strain = TimeSeries.read(filepath, "channel")
+    white = strain.whiten()
 
-    strain = TimeSeries.read(filepath)
-    strain.sample_rate = 4096
+    plot = Plot(strain, white, separate=True, sharex=True)
+    plot.savefig("src/data/sanity_images/comparison.png")
+
+    """
     plt.plot(strain, 'forestgreen')
     plt.xlabel("Time (Seconds)")
     plt.savefig("src/data/sanity_images/timeseries.png")
     plt.xlim(1.85, 2)
     plt.savefig("src/data/sanity_images/timeseries_short.png")
     plt.close()
-
+    """
 
 def testSpectrogram():
     filepath = "src/data/sanity_images/timeseries.hdf5"
@@ -53,7 +58,7 @@ if __name__ == "__main__":
             "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle",
             "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
 
-    testing = ["Blip"]
+    testing = ["Blip", "Koi_Fish", "Helix", "1400Ripples"]
 
     testGenerator(testing)
     testRest(testing)

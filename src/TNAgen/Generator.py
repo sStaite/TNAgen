@@ -6,8 +6,10 @@ import numpy as np
 import pandas as pd 
 import librosa
 from scipy import signal, interpolate
+from gwpy.timeseries import TimeSeries
+from gwpy.detector import Channel
 import h5py
-import cv2
+import framel
 
 class Generator():
     """
@@ -43,6 +45,8 @@ class Generator():
         # Get the list of glitches
         self.label_df = pd.read_csv('src/data/array_to_label_conversion.csv')
         self.glitches = self.label_df['label'].tolist()
+
+        # Get the standard PSD
         self.PSD = np.swapaxes(np.loadtxt('src/data/ALIGO_noise_curve.txt'), 0, 1)
 
 
@@ -208,16 +212,14 @@ class Generator():
 
         # Check there are glitches generated.
         if len(self.curr_array) == 0:
-            print("There are currently no generated glitches.")
-            return
+            raise Exception("There are currently no generated glitches.")
         
         if position is not None and (len(self.curr_array) != len(position)):
-            print("Position array is not the same length as the number of glitches.")
-            return
+            raise Exception("Position array is not the same length as the number of glitches.")
 
-        filepath = path + f"/{name}.hdf5"
+        #filepath = path + f"/{name}.hdf5"
 
-        f = h5py.File(filepath, "w")
+        #f = h5py.File(filepath, "w")
 
         # Create a timeseries which just has gaussian noise for our specific PSD
         if length == "Default":
@@ -261,9 +263,13 @@ class Generator():
         if noise:
             timeseries = self._add_gaussian_noise(timeseries, self.PSD, duration=length) 
 
-        f.create_dataset(f"/timeseries", data=timeseries, compression="gzip")
-        f.flush()
-        f.close()
+        t = TimeSeries(timeseries, sample_rate=4096, name='timeseries', channel=Channel("channel", sample_rate=4096, frequency_range=(10., 2048.)))
+        print(t)
+        t.write('src/data/sanity_images/timeseries.gwf')
+
+        #f.create_dataset("/timeseries", data=timeseries, compression="gzip")
+        #f.flush()
+        #f.close()
 
         if clear_queue:
             self._clear_queue()
@@ -482,8 +488,8 @@ class Generator():
         PSD = f(freq_values)
 
         # Now construct Gaussian data series
-        Real = np.random.normal(0,1,size=int(N_fd))*np.sqrt(PSD/(4.*df))
-        Imag = np.random.normal(0,1,size=int(N_fd))*np.sqrt(PSD/(4.*df))
+        Real = np.random.normal(0,1,size=int(N_fd)-1)*np.sqrt(PSD/(4.*df))
+        Imag = np.random.normal(0,1,size=int(N_fd)-1)*np.sqrt(PSD/(4.*df))
 
         # Create data series as data = real + i*imag
         detData = (Real + 1j*Imag) 
