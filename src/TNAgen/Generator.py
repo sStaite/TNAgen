@@ -195,18 +195,19 @@ class Generator():
             self._clear_queue()
 
 
-    def save_as_timeseries(self, path, name="timeseries", noise=True, length="Default", position=None, SNR=10, clear_queue=False):
+    def save_as_timeseries(self, path, name="timeseries", noise=True, length="Default", position=None, SNR=10, format="gwf", clear_queue=False):
         """
-        Saves the queue of artifacts in a h5 file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
+        Saves the queue of artifacts in a file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
 
         Args:
-            path: Folder where the h5 file should be created.
-            name (String): Name for the h5 file (Default: "timeseries")
+            path: Folder where the file should be created.
+            name (String): Name for the file (Default: "timeseries")
             noise: If the user wants noise to be saved with the timeseries
             length: The length (in seconds) of the snippet. Default is 1/3 * the number of glitches given.
             position: The positions of the start of glitches, given in the form of a numpy array in seconds; must be of size len(self.glitches)
                         Default=None: The glitches will be distributed randomly 
             SNR: The Signal to noise ratio that is wanted for the glitches. (Default: 10)
+            format: Name of the format that the file should be saved as. Options "gwf", "hdf5". (Default: "gwf")
             clear_queue: Boolean value for if the queue will be cleared after the images are saved. (Default: False)
         """
 
@@ -216,10 +217,6 @@ class Generator():
         
         if position is not None and (len(self.curr_array) != len(position)):
             raise Exception("Position array is not the same length as the number of glitches.")
-
-        #filepath = path + f"/{name}.hdf5"
-
-        #f = h5py.File(filepath, "w")
 
         # Create a timeseries which just has gaussian noise for our specific PSD
         if length == "Default":
@@ -263,13 +260,18 @@ class Generator():
         if noise:
             timeseries = self._add_gaussian_noise(timeseries, self.PSD, duration=length) 
 
-        t = TimeSeries(timeseries, sample_rate=4096, name='timeseries', channel=Channel("channel", sample_rate=4096, frequency_range=(10., 2048.)))
-        print(t)
-        t.write('src/data/sanity_images/timeseries.gwf')
-
-        #f.create_dataset("/timeseries", data=timeseries, compression="gzip")
-        #f.flush()
-        #f.close()
+        # Save the dataset
+        if format == "gwf":
+            t = TimeSeries(timeseries, sample_rate=4096, name=f'{name}', channel="CHANNEL")
+            t.write(path + f"/{name}.gwf")
+        elif format == "hdf5":
+            filepath = path + f"/{name}.hdf5"
+            f = h5py.File(filepath, "w")
+            f.create_dataset(f"/{name}", data=timeseries, compression="gzip")
+            f.flush()
+            f.close()
+        else:
+            raise Exception(f"The format {format} cannot be used.")
 
         if clear_queue:
             self._clear_queue()
