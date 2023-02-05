@@ -12,16 +12,19 @@ def testGenerator(testing):
         generator.generate(test, 5, clean=True)
         #generator.save_as_png("src/data/sanity_images")
 
-    generator.save_as_timeseries(path="src/data/sanity_images", noise=True, SNR=10, clear_queue=True)
+    generator.save_as_timeseries(path="src/data/sanity_images", name="test", noise=True, SNR=10, clear_queue=True)
 
 
 def testRest(testing):
 
-    filepath = "src/data/sanity_images/timeseries.gwf"
-    strain = TimeSeries.read(filepath, "channel")
+    filepath = "src/data/sanity_images/test.gwf"
+    strain = TimeSeries.read(filepath, "test")
     white = strain.whiten()
 
-    plot = Plot(strain, white, separate=True, sharex=True)
+    plot = Plot(strain, white, separate=True, sharex=True, color="forestgreen")
+    ax = plot.gca()
+    ax.set_xlim(0, 6.66)
+    plot.refresh()
     plot.savefig("src/data/sanity_images/comparison.png")
 
     """
