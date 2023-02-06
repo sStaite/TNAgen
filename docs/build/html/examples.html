@@ -73,39 +73,34 @@
              
   <section id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h1>
-<p>First, we need to import the Generator module and instatiate a Generator object.
-.. code-block:: python</p>
-<blockquote>
-<div><p>from TNAgen import Generator
-generator = Generator()</p>
-</div></blockquote>
-<p>Generating and saving 50 Koi Fish glitches as images of spectrograms:
-.. code-block:: python</p>
-<blockquote>
-<div><p>generator.generate(“Koi_Fish”, 50)
-generator.save_as_png(“path/to/file”, clear_queue=True)</p>
-</div></blockquote>
-<p>Generating and saving 2 of each glitch and saving as time-series in a hdf5 file:
-.. code-block:: python</p>
-<blockquote>
-<div><p>generator.generate_all(2)
-generator.save_as_hdf5(“path/to/file”, “name”, clear_queue=True)</p>
-</div></blockquote>
-<p>Generating raw data (numpy arrays) for 50 Blip glitches.
-.. code-block:: python</p>
-<blockquote>
-<div><p>numpy_array, label_list = generator.generate(“Blip”, 50)
-generator.clear_queue()</p>
-</div></blockquote>
-<p>Generating 10 Blip glitches, 10 Koi Fish glitches and saving to one hdf5 file, then generating 50 Chirp glitches and saving in another hdf5 file.
-.. code-block:: python</p>
-<blockquote>
-<div><p>generator.generate(“Blip”, 10)
-generator.generate(“Koi Fish”, 10)
-generator.save_as_hdf5(“path/to/file”, “file1”, clear_queue=True)
-generator.generate(“Chirp”, 50)
-generator.save_as_hdf5(“path/to/file”, “file2”, clear_queue=True)</p>
-</div></blockquote>
+<p>First, we need to import the Generator module and instatiate a Generator object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">TNAgen</span> <span class="kn">import</span> <span class="n">Generator</span>
+<span class="n">generator</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Generating and saving 50 Koi Fish glitches as images of spectrograms:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="s2">&quot;Koi_Fish&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">save_as_png</span><span class="p">(</span><span class="s2">&quot;path/to/file&quot;</span><span class="p">,</span> <span class="n">clear_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Generating and saving 2 of each glitch and saving as time-series in a hdf5 file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">generator</span><span class="o">.</span><span class="n">generate_all</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">save_as_hdf5</span><span class="p">(</span><span class="s2">&quot;path/to/file&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">clear_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Generating raw data (numpy arrays) for 50 Blip glitches.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">numpy_array</span><span class="p">,</span> <span class="n">label_list</span> <span class="o">=</span> <span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="s2">&quot;Blip&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">clear_queue</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Generating 10 Blip glitches, 10 Koi Fish glitches and saving to one hdf5 file, then generating 50 Chirp glitches and saving in another hdf5 file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="s2">&quot;Blip&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="s2">&quot;Koi Fish&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">save_as_hdf5</span><span class="p">(</span><span class="s2">&quot;path/to/file&quot;</span><span class="p">,</span> <span class="s2">&quot;file1&quot;</span><span class="p">,</span> <span class="n">clear_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="s2">&quot;Chirp&quot;</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">save_as_hdf5</span><span class="p">(</span><span class="s2">&quot;path/to/file&quot;</span><span class="p">,</span> <span class="s2">&quot;file2&quot;</span><span class="p">,</span> <span class="n">clear_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 
 
