@@ -3,7 +3,7 @@ To do:
     Calculate SNR
     Gaussian noise generation 
     Automate glitch cleaning
-    Saving files in gwf format 
+    Should the save as timeseries return an array?
 
 Misc:
     Comment on code
