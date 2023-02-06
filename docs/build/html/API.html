@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Package documentation &mdash; TNAgen 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> TNAgen
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Installation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Package documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generator-class">Generator class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TNAgen</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Package documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/API.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="package-documentation">
+<h1>Package documentation<a class="headerlink" href="#package-documentation" title="Permalink to this heading"></a></h1>
+<section id="generator-class">
+<h2>Generator class<a class="headerlink" href="#generator-class" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="Generator.Generator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Generator.</span></span><span class="sig-name descname"><span class="pre">Generator</span></span><a class="headerlink" href="#Generator.Generator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Transient noise artifacts generator from ‘“Generating transient noise artefacts in gravitational-wave
+detector data with generative adversarial networks by Powell et. al. ” &lt;<a class="reference external" href="https://arxiv.org/abs/2207.00207">https://arxiv.org/abs/2207.00207</a>&gt;’</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="Generator.Generator.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">glitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_images_to_generate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.generate" title="Permalink to this definition"></a></dt>
+<dd><p>Generates images for the given glitch in the form of numpy arrays, and adds it to the ‘queue’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>glitch</strong> (<em>String</em>) – Name of the glitch to be generated.</p></li>
+<li><p><strong>n_images_to_generate</strong> – Number of images to be generated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a (n_images_to_generate x 140 x 170) numpy array of the images generated
+and a (n_images_to_generate) list of corresponding glitch labels.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Returns a tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Generator.Generator.generate_all">
+<span class="sig-name descname"><span class="pre">generate_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_images_to_generate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.generate_all" title="Permalink to this definition"></a></dt>
+<dd><p>Generates images for all the glitches, in the form of numpy arrays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n_images_to_generate</strong> – Number of images to be generated, for each glitch</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>a ((n_images_to_generate * num_of_glitches) x 140 x 170) numpy array of the images generated
+and a (n_images_to_generate * num_of_glitches) list of corresponding glitch labels.</p>
+<p>The array can be accessed through ‘generator.curr_array’ and the glitch labels through ‘generator.curr_glitch’</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Returns a tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Generator.Generator.save_as_png">
+<span class="sig-name descname"><span class="pre">save_as_png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.save_as_png" title="Permalink to this definition"></a></dt>
+<dd><p>Saves the queue of artifacts, which are in the form of a spectrogram, as png files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Folder where the images will be saved.</p></li>
+<li><p><strong>clear_queue</strong> – Boolean value for if the queue will be cleared after the images are saved. (Default: False)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Generator.Generator.save_as_timeseries">
+<span class="sig-name descname"><span class="pre">save_as_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'timeseries'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gwf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.save_as_timeseries" title="Permalink to this definition"></a></dt>
+<dd><p>Saves the queue of artifacts in a file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Folder where the file should be created.</p></li>
+<li><p><strong>name</strong> (<em>String</em>) – Name for the file (Default: “timeseries”)</p></li>
+<li><p><strong>noise</strong> – If the user wants noise to be saved with the timeseries</p></li>
+<li><p><strong>length</strong> – The length (in seconds) of the snippet. Default is 1/3 * the number of glitches given.</p></li>
+<li><p><strong>position</strong> – The positions of the start of glitches, given in the form of a numpy array in seconds; must be of size len(self.glitches)
+Default=None: The glitches will be distributed randomly</p></li>
+<li><p><strong>SNR</strong> – The Signal to noise ratio that is wanted for the glitches. (Default: 10)</p></li>
+<li><p><strong>format</strong> – Name of the format that the file should be saved as. Options “gwf”, “hdf5”. (Default: “gwf”)</p></li>
+<li><p><strong>clear_queue</strong> – Boolean value for if the queue will be cleared after the images are saved. (Default: False)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Jade Powell, Seamus Staite.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
