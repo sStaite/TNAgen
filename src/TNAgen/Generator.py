@@ -198,6 +198,7 @@ class Generator():
     def save_as_timeseries(self, path, name="timeseries", noise=True, length="Default", position=None, SNR=10, format="gwf", clear_queue=False):
         """
         Saves the queue of artifacts in a file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
+        Sample rate and the position of the glitches are saved into the file.
 
         Args:
             path: Folder where the file should be created.
@@ -225,6 +226,7 @@ class Generator():
         b = np.arange(start=0, stop=length, step=(1/4096))
         n = np.zeros(int(length * 4096)) 
         timeseries = np.array(list(zip(b, n)))
+        glitch_times = []
 
         count_dict = {string: 0 for string in set(self.curr_glitch)}
         for i in range(len(self.curr_array)):
@@ -241,7 +243,9 @@ class Generator():
                 curr_pos = np.random.choice(np.arange(len(timeseries[:, 0])) - len(curr_time_series) // 2)
             else:
                 curr_pos = position[i]
-            
+
+            glitch_times += [curr_pos / 4096]
+
             # Add the glitch in
             # This code just lets the data from the glitch be put anywhere on the timeseries
             for i in range(len(curr_time_series)):
@@ -276,6 +280,8 @@ class Generator():
         if clear_queue:
             self._clear_queue()
 
+        return glitch_times
+
 
     def _convert_to_timeseries(self, spectrogram):
         """
@@ -287,10 +293,6 @@ class Generator():
         Returns:
             A 2 second timeseries (8192 datapoints at 4096Hz) of the spectrogram data
         """
-
-        fs = 4096
-        NFFT = int(fs/16.)
-        NOVL = int(NFFT*15./16)
 
         time_series = librosa.griffinlim(spectrogram, n_iter=64)
         time_series[1::2] *= -1            
@@ -478,20 +480,20 @@ class Generator():
         
         fs = 4096
         df = 1 / duration
-        f_min = 10
+        f_min = 30
 
         lo = int(f_min/df)
-        N_fd = np.round(fs * duration / 2.0 - lo)
+        N_fd = np.floor(fs * duration / 2.0 - lo)
         Nt_noise = int(fs * duration)
 
         # Resample PSD
-        freq_values = np.arange(10, 2048, df)
+        freq_values = np.arange(30, 2048, df)
         f = interpolate.interp1d(PSD[0], PSD[1])
         PSD = f(freq_values)
-
+        
         # Now construct Gaussian data series
-        Real = np.random.normal(0,1,size=int(N_fd)-1)*np.sqrt(PSD/(4.*df))
-        Imag = np.random.normal(0,1,size=int(N_fd)-1)*np.sqrt(PSD/(4.*df))
+        Real = np.random.normal(0,1,size=int(N_fd))*np.sqrt(PSD/(4.*df))
+        Imag = np.random.normal(0,1,size=int(N_fd))*np.sqrt(PSD/(4.*df))
 
         # Create data series as data = real + i*imag
         detData = (Real + 1j*Imag) 
