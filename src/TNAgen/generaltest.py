@@ -19,7 +19,7 @@ def testRest(testing):
 
     filepath = "src/data/sanity_images/test.gwf"
     strain = TimeSeries.read(filepath, "test")
-    white = strain.whiten() 
+    white = strain.whiten()
 
     plot = Plot(strain, white, separate=True, sharex=True, color="forestgreen")
     ax = plot.gca()

@@ -30,7 +30,7 @@ $ python setup.py install
 ```
 
 ## Documentation
-Documentation can be found at https://tnagen.readthedocs.io/en/stable/
+Documentation can be found at https://tnagen.readthedocs.io/
 
 ## Examples
 First, we need to import the Generator module and instatiate a Generator object.
