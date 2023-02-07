@@ -293,6 +293,32 @@ class Generator():
         Returns:
             A 2 second timeseries (8192 datapoints at 4096Hz) of the spectrogram data
         """
+        freq_values = np.logspace(3, 11, 140, base=2)
+        arr = np.linspace(8, 2048, 140)
+
+        f = interpolate.interp1d(arr, spectrogram[:, 0])
+        spec = np.zeros((1, 140))
+        spec[0] = np.array(f(freq_values))
+
+        for i in range(169):
+            f = interpolate.interp1d(arr, spectrogram[:, i+1])
+            new = np.zeros((1, 140))
+            new[0] = np.array(f(freq_values))
+            spec = np.concatenate((spec, new))
+        
+        spec = np.swapaxes(spec, 0, 1)
+        spec = np.flip(spec)
+
+        """
+        fig, ax = plt.subplots(figsize=(10,10))
+        im = ax.imshow(spec)
+        ax.set_title("Spectrogram Undistorted", size=20)
+        ax.invert_yaxis()
+        ax.set_yticks(ticks = np.arange(0, 140, 140/6), labels = np.arange(8, 2048, 340))
+        fig.tight_layout()
+        plt.savefig("src/data/sanity_images/specundistort.png")     
+        plt.close()  
+        """
 
         time_series = librosa.griffinlim(spectrogram, n_iter=64)
         time_series[1::2] *= -1            
