@@ -22,14 +22,6 @@ def testRest(testing, glitch_times):
     strain = TimeSeries.read(filepath, "test")
     white = strain.whiten()
 
-    print(strain)
-
-    fig2 = strain.asd().plot()
-    plt.xlim(2**3,2**11)
-    plt.ylim(1e-25, 1e-19)
-    plt.savefig("src/data/sanity_images/asd.png")
-    plt.close()
-
     plot = Plot(strain, white, separate=True, sharex=True, color="forestgreen")
     ax = plot.gca()
     ax.set_xlim(0, 32)
@@ -52,10 +44,10 @@ def testRest(testing, glitch_times):
     plt.figure(figsize=(8.5, 7))
     spec_H1, freqs, bins, im = plt.specgram(strain[out[0]: out[1]], NFFT=NFFT, Fs=4096, window=window,
         noverlap=NOVL, cmap=spec_cmap, scale='linear',mode='magnitude')
-    plt.ylim(10, 2000)
+    #plt.ylim(10, 2000)
     plt.xlabel('time (s)',fontsize=14)
     plt.ylabel('frequency (Hz)',fontsize=14)
-    plt.yscale('log', base=2)
+    #plt.yscale('log', base=2)
     plt.savefig("src/data/sanity_images/spectrogram_jade.png")
 
 
