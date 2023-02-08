@@ -300,6 +300,7 @@ class Generator():
         spec = np.zeros((1, 140))
         spec[0] = np.array(f(freq_values))
 
+        # normalise the spectrogram, but also flip the data (this is what we want for the timeseries!)
         for i in range(169):
             f = interpolate.interp1d(arr, spectrogram[:, i+1])
             new = np.zeros((1, 140))
@@ -307,20 +308,20 @@ class Generator():
             spec = np.concatenate((spec, new))
         
         spec = np.swapaxes(spec, 0, 1)
-        spec = np.flip(spec)
+        #spec = np.flip(spec)
 
-        """
+        '''
         fig, ax = plt.subplots(figsize=(10,10))
         im = ax.imshow(spec)
         ax.set_title("Spectrogram Undistorted", size=20)
-        ax.invert_yaxis()
+        #ax.invert_yaxis()
         ax.set_yticks(ticks = np.arange(0, 140, 140/6), labels = np.arange(8, 2048, 340))
         fig.tight_layout()
         plt.savefig("src/data/sanity_images/specundistort.png")     
         plt.close()  
-        """
+        '''
 
-        time_series = librosa.griffinlim(spectrogram, n_iter=64)
+        time_series = librosa.griffinlim(spec, n_iter=64)
         time_series[1::2] *= -1            
         time_series = signal.resample(time_series, 8192)
 
@@ -481,7 +482,7 @@ class Generator():
         freq_signal = np.fft.rfft(timeseries) / fs 
         freq_values = np.fft.fftfreq(len(timeseries), d=1./fs)
         
-        # Get only the frequencies between 10Hz and 2048Hz
+        # Get only the frequencies between 8Hz and 2048Hz
         freq_signal = freq_signal[20:4096]
         freq_values = freq_values[20:4096]
 
@@ -506,14 +507,14 @@ class Generator():
         
         fs = 4096
         df = 1 / duration
-        f_min = 30
+        f_min = 10
 
         lo = int(f_min/df)
         N_fd = np.floor(fs * duration / 2.0 - lo)
         Nt_noise = int(fs * duration)
 
         # Resample PSD
-        freq_values = np.arange(30, 2048, df)
+        freq_values = np.arange(10, 2048, df)
         f = interpolate.interp1d(PSD[0], PSD[1])
         PSD = f(freq_values)
         
