@@ -168,7 +168,7 @@ class Generator():
 
     def save_as_png(self, path, clear_queue=False):
         """
-        Saves the queue of artifacts, which are in the form of a spectrogram, as png files.
+        Saves the queue of artifacts, which are in the form of a spectrogram, as seperate png files.
 
         Args:
             path: Folder where the images will be saved.
@@ -281,6 +281,40 @@ class Generator():
             self._clear_queue()
 
         return glitch_times
+
+
+    def save_as_array(self, path, name="glitchfile", clear_queue=False):
+        """
+        Saves the queue of artifacts, which are in the form of a spectrogram - in their basic array form. The 2d arrays, which are 170x140, 
+        are saved into a hdf5 file. 
+
+        Each glitch type has its own dataset - within each of these datasets there is a Nx170x140 array, for a N of a specific glitch.  
+
+        Args:
+            path: Folder where the hdf5 file will be saved.
+            name: name of hdf5 file
+            clear_queue: Boolean value for if the queue will be cleared after the images are saved. (Default: False)
+        """
+
+        f = h5py.File(path + f"/{name}.hdf5", "w")
+        glitches_used = list(set(self.curr_glitch))
+        num_glitches = len(glitches_used)
+
+        dct = {glitches_used[i]: np.empty(shape=(0, 140, 170)) for i in range(num_glitches)}
+
+        for i in range(len(self.curr_glitch)):
+            o = dct[self.curr_glitch[i]]
+            n = self.curr_array[i].reshape(1, 140, 170)
+            dct[self.curr_glitch[i]] = np.concatenate((o, n))
+
+        for g in glitches_used:
+            f.create_dataset(g, data=dct[g], compression="gzip")
+
+        f.flush()
+        f.close()
+
+        if clear_queue:
+            self._clear_queue()
 
 
     def _convert_to_timeseries(self, spectrogram):

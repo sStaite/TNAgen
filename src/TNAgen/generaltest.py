@@ -10,10 +10,10 @@ def testGenerator(testing):
     generator = Generator()
 
     for test in testing:
-        generator.generate(test, 96, clean=True)
+        generator.generate(test, 32, clean=True)
         #generator.save_as_png("src/data/sanity_images")
 
-    glitch_times = generator.save_as_timeseries(path="src/data/sanity_images", name="test", noise=True, SNR=100, clear_queue=True)
+    glitch_times = generator.save_as_timeseries(path="src/data/sanity_images", name="test", noise=True, SNR=12, clear_queue=True)
     return glitch_times
 
 
@@ -88,19 +88,25 @@ def testSpectrogram():
     window = np.blackman(NFFT)
     spec_cmap='viridis'
     
-    
+def test_array_save():
+    generator = Generator()
+
+    for test in testing:
+        generator.generate(test, 3, clean=True)
+
+    generator.save_as_array("src/data/sanity_images", "test")
+
 
 if __name__ == "__main__":
     all = ["1080Lines", "Extremely_Loud", "Helix", "Light_Modulation",
             "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle",
             "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
 
-    testing = ["Chirp"]
+    testing = ["Chirp", "Blip", "Koi_Fish"]
 
-    g = testGenerator(testing)
-    testRest(testing, g)
+    #g = testGenerator(testing)
+    #testRest(testing, g)
     #testSpectrogram()
-
-    # NO GLITCH AND NONE OF THE ABOVE SHOULD NOT EVEN BE OPTIONS, EXTREMELY LOUD PROBABLY TOO!
+    test_array_save()
 
     
