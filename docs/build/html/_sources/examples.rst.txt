@@ -6,7 +6,7 @@ First, we need to import the Generator module and instatiate a Generator object.
 .. code-block:: python
 
     from TNAgen import Generator
-    generator = Generator()
+    generator = Generator.Generator()
 
 Generating and saving 50 Koi Fish glitches as images of spectrograms:
 
@@ -20,21 +20,28 @@ Generating and saving 2 of each glitch and saving as time-series in a hdf5 file:
 .. code-block:: python
 
     generator.generate_all(2)
+    generator.save_as_hdf5("path/to/file", "name", SNR=12, clear_queue=True)
+
+Generating and saving 96 Blip glitches and saving as time-series in a gwf file:
+
+.. code-block:: python
+
+    generator.generate("Blip", 96)
     generator.save_as_hdf5("path/to/file", "name", clear_queue=True)
 
-Generating raw data (numpy arrays) for 50 Blip glitches.
+
+Generating raw data (numpy arrays) for 50 Chirp glitches:
 
 .. code-block:: python
 
-    numpy_array, label_list = generator.generate("Blip", 50)
+    numpy_array, label_list = generator.generate("Chirp", 50)
     generator.clear_queue()
 
-Generating 10 Blip glitches, 10 Koi Fish glitches and saving to one hdf5 file, then generating 50 Chirp glitches and saving in another hdf5 file.
+Generating raw data (numpy arrays) for 25 Tomte glitches and 25 Blip glitches and saving them to a hdf5 file:
 
 .. code-block:: python
 
-    generator.generate("Blip", 10)
-    generator.generate("Koi Fish", 10)
-    generator.save_as_hdf5("path/to/file", "file1", clear_queue=True)
-    generator.generate("Chirp", 50)
-    generator.save_as_hdf5("path/to/file", "file2", clear_queue=True)
+    generator.generate("Tomte", 25)
+    generator.generate("Blip", 25)
+    generator.save_as_array("path/to/file", "name")
+    

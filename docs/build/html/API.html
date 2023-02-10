@@ -127,9 +127,26 @@ and a (n_images_to_generate * num_of_glitches) list of corresponding glitch labe
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="Generator.Generator.save_as_array">
+<span class="sig-name descname"><span class="pre">save_as_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'glitchfile'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.save_as_array" title="Permalink to this definition"></a></dt>
+<dd><p>Saves the queue of artifacts, which are in the form of a spectrogram - in their basic array form. The 2d arrays, which are 170x140,
+are saved into a hdf5 file.</p>
+<p>Each glitch type has its own dataset - within each of these datasets there is a Nx170x140 array, for a N of a specific glitch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – Folder where the hdf5 file will be saved.</p></li>
+<li><p><strong>name</strong> – name of hdf5 file</p></li>
+<li><p><strong>clear_queue</strong> – Boolean value for if the queue will be cleared after the images are saved. (Default: False)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="Generator.Generator.save_as_png">
 <span class="sig-name descname"><span class="pre">save_as_png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.save_as_png" title="Permalink to this definition"></a></dt>
-<dd><p>Saves the queue of artifacts, which are in the form of a spectrogram, as png files.</p>
+<dd><p>Saves the queue of artifacts, which are in the form of a spectrogram, as seperate png files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -143,7 +160,8 @@ and a (n_images_to_generate * num_of_glitches) list of corresponding glitch labe
 <dl class="py method">
 <dt class="sig sig-object py" id="Generator.Generator.save_as_timeseries">
 <span class="sig-name descname"><span class="pre">save_as_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'timeseries'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gwf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.save_as_timeseries" title="Permalink to this definition"></a></dt>
-<dd><p>Saves the queue of artifacts in a file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.</p>
+<dd><p>Saves the queue of artifacts in a file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
+Sample rate and the position of the glitches are saved into the file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
