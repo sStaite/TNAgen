@@ -44,4 +44,5 @@ Generating raw data (numpy arrays) for 25 Tomte glitches and 25 Blip glitches an
     generator.generate("Tomte", 25)
     generator.generate("Blip", 25)
     generator.save_as_array("path/to/file", "name")
+
     
