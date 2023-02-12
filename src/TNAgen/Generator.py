@@ -50,18 +50,19 @@ class Generator():
         self.PSD = np.swapaxes(np.loadtxt('src/data/ALIGO_noise_curve.txt'), 0, 1)
 
 
-    def generate(self, glitch, n_images_to_generate, clean=False):
+    def generate(self, glitch, n_images_to_generate=10, clean=True):
         """
         Generates images for the given glitch in the form of numpy arrays, and adds it to the 'queue'.
 
-        Args:
-            glitch (String): Name of the glitch to be generated.
-            n_images_to_generate: Number of images to be generated. 
-
-        Returns:
-            Returns a tuple: a (n_images_to_generate x 140 x 170) numpy array of the images generated 
-            and a (n_images_to_generate) list of corresponding glitch labels.
-        
+        :param glitch: Name of the glitch to be generated
+        :type glitch: str
+        :param n_images_to_generate: Number of images to be generated, defaults to 10
+        :type n_images_to_generate: int, optional 
+        :param clean: Whether or not to remove the background noise from the generated glitches, defaults to True
+        :type clean: bool, optional
+        :return: A (n_images_to_generate x 140 x 170) numpy array of the images generated 
+            and a (n_images_to_generate) list of corresponding glitch labels
+        :rtype: tuple
         """
 
         ## Generate X array for glitches
@@ -107,18 +108,18 @@ class Generator():
         return (np_array, label_list)
 
 
-    def generate_all(self, n_images_to_generate, clean=False):
+    def generate_all(self, n_images_to_generate=1, clean=True):
         """
-        Generates images for all the glitches, in the form of numpy arrays.
+        Generates images for all the glitches, in the form of numpy arrays. The generated array can be accessed 
+        through 'generator.curr_array' and the glitch labels through 'generator.curr_glitch'.
 
-        Args:
-            n_images_to_generate: Number of images to be generated, for each glitch
-
-        Returns:
-            Returns a tuple: a ((n_images_to_generate * num_of_glitches) x 140 x 170) numpy array of the images generated 
+        :param n_images_to_generate: Number of each image to be generated, defaults to 1
+        :type n_images_to_generate: int, optional
+        :param clean: Whether or not to remove the background noise from the generated glitches, defaults to True
+        :type clean: bool, optional
+        :return: a ((n_images_to_generate * num_of_glitches) x 140 x 170) numpy array of the images generated 
             and a (n_images_to_generate * num_of_glitches) list of corresponding glitch labels.
-
-            The array can be accessed through 'generator.curr_array' and the glitch labels through 'generator.curr_glitch'
+        :rtype: tuple
         """
         
         # Generate X array for glitches
@@ -170,9 +171,10 @@ class Generator():
         """
         Saves the queue of artifacts, which are in the form of a spectrogram, as seperate png files.
 
-        Args:
-            path: Folder where the images will be saved.
-            clear_queue: Boolean value for if the queue will be cleared after the images are saved. (Default: False)
+        :param path: Folder where the images will be saved
+        :type path: str
+        :param clear_queue: Value for if the queue will be cleared after the images are saved, defaults to False
+        :type clear_queue: bool, optional
         """
 
         if len(self.curr_array) == 0:
@@ -200,16 +202,23 @@ class Generator():
         Saves the queue of artifacts in a file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
         Sample rate and the position of the glitches are saved into the file.
 
-        Args:
-            path: Folder where the file should be created.
-            name (String): Name for the file (Default: "timeseries")
-            noise: If the user wants noise to be saved with the timeseries
-            length: The length (in seconds) of the snippet. Default is 1/3 * the number of glitches given.
-            position: The positions of the start of glitches, given in the form of a numpy array in seconds; must be of size len(self.glitches)
-                        Default=None: The glitches will be distributed randomly 
-            SNR: The Signal to noise ratio that is wanted for the glitches. (Default: 10)
-            format: Name of the format that the file should be saved as. Options "gwf", "hdf5". (Default: "gwf")
-            clear_queue: Boolean value for if the queue will be cleared after the images are saved. (Default: False)
+        :param path: Folder where the timeseries file will be created
+        :type path: str
+        :param name: name of the file, defaults to "timeseries"
+        :type name: str, optional
+        :param noise: Whether or not gaussian noise should be added to the timeseries (Note - for best results, set clean=True in the generation of the glitches
+         if noise=True is wanted), defaults to True
+        :type noise: bool, optional
+        :param length: The length (in seconds) of the snippet. Default is 1/3 * the number of glitches given, defaults to "Default" 
+        :type length: float, optional
+        :param position: The positions of the start of glitches and must be a list or numpy array of size len(self.glitches), with the positons give in seconds, defaults to None
+        :type position: list, optional
+        :param SNR: The signal to noise ratio for the glitches, defaults to 10
+        :type SNR: float, optional
+        :param format: Name of the format that the file will be saved as with pptions "gwf", "hdf5", defaults to "gwf"
+        :type format: str, optional
+        :param clear_queue: Value for if the queue will be cleared after the images are saved, defaults to False
+        :type clear_queue: bool, optional
         """
 
         # Check there are glitches generated.
@@ -255,7 +264,7 @@ class Generator():
                     timeseries[curr_pos + i, 1] += curr_time_series[i]
 
 
-            #self.__timer("Saving timeseries:", i+1, len(self.curr_array))
+            self._timer("Saving timeseries:", i+1, len(self.curr_array))
             index+=1
 
         # Save dataset
@@ -283,17 +292,17 @@ class Generator():
         return glitch_times
 
 
-    def save_as_array(self, path, name="glitchfile", clear_queue=False):
+    def save_as_array(self, path, name="glitch_file", clear_queue=False):
         """
         Saves the queue of artifacts, which are in the form of a spectrogram - in their basic array form. The 2d arrays, which are 170x140, 
-        are saved into a hdf5 file. 
+        are saved into a hdf5 file. Each glitch type has its own dataset - within each of these datasets there is a Nx170x140 array, for a N of a specific glitch.  
 
-        Each glitch type has its own dataset - within each of these datasets there is a Nx170x140 array, for a N of a specific glitch.  
-
-        Args:
-            path: Folder where the hdf5 file will be saved.
-            name: name of hdf5 file
-            clear_queue: Boolean value for if the queue will be cleared after the images are saved. (Default: False)
+        :param path: Folder where the timeseries file will be created
+        :type path: str
+        :param name: name of the file, defaults to "glitch_file"
+        :type name: str, optional
+        :param clear_queue: Value for if the queue will be cleared after the images are saved, defaults to False
+        :type clear_queue: bool, optional
         """
 
         f = h5py.File(path + f"/{name}.hdf5", "w")
@@ -307,6 +316,9 @@ class Generator():
             n = self.curr_array[i].reshape(1, 140, 170)
             dct[self.curr_glitch[i]] = np.concatenate((o, n))
 
+            self._timer("Saving array     :", i+1, len(self.curr_glitch))
+
+
         for g in glitches_used:
             f.create_dataset(g, data=dct[g], compression="gzip")
 
@@ -319,14 +331,14 @@ class Generator():
 
     def _convert_to_timeseries(self, spectrogram):
         """
-        Converts the given spectrogram into a timeseries.
+        Helper function that converts the given spectrogram into a timeseries.
 
-        Args:
-            spectrogram: a 170x140 numpy array of a spectrogram of a glitch
-    
-        Returns:
-            A 2 second timeseries (8192 datapoints at 4096Hz) of the spectrogram data
+        :param spectrogram: a 170x140 numpy array of a spectrogram of a glitch
+        :type spectrogram: numpy array
+        :return: A 2 second timeseries (8192 datapoints at 4096Hz) of the spectrogram data
+        :rtype: numpy array
         """
+
         freq_values = np.logspace(3, 11, 140, base=2)
         arr = np.linspace(8, 2048, 140)
 
@@ -364,15 +376,16 @@ class Generator():
 
     def _clean_spectrogram(self, spectrogram, glitch):
         """
-        Removes all datapoints below a certain threshold.
+        Helper function that removes all datapoints from a spectrogram below a certain threshold. At the moment the threshold is
+        manually found, but in the future it would be good to do this automatically. 
 
-        Args:
-            spectrogram: a 170x140 numpy array of spectrogram data 
-
-        Returns:
-            A spectrogram of the same shape, which has been cleaned of noise.
+        :param spectrogram: a 170x140 numpy array of spectrogram data 
+        :type spectrogram: numpy array
+        :param glitch: name of the glitch that is being cleaned
+        :type glitch: str
+        :return: a spectrogram of the same shape that has been cleaned
+        :rtype: numpy array
         """
-
 
         # First, get rid of all background noise
         both = ["Paired_Doves", "Extremely_Loud", "Air_Compressor", "Low_Frequency_Lines", "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Power_Line"]
@@ -417,6 +430,11 @@ class Generator():
     def _clean_vertically(self, spectrogram, threshold):
         """
         Helper function to clean_spectrogram that removes all extra noise from the left and right hand sides of the glitch (cleaning columns)
+
+        :param spectrogram: a 170x140 numpy array of spectrogram data 
+        :type spectrogram: numpy array
+        :param threshold: Threshold for which pixels should be cleaned and which should be untouched
+        :type threshold: float
         """
         indmax = np.unravel_index(np.argmax(spectrogram, axis=None), spectrogram.shape)
         min_time = max_time = indmax[2]
@@ -451,6 +469,11 @@ class Generator():
     def _clean_horizontally(self, spectrogram, threshold):
         """
         Helper function to clean_spectrogram that removes all extra noise from the top and bottom of the glitch (cleaning rows)
+
+        :param spectrogram: a 170x140 numpy array of spectrogram data 
+        :type spectrogram: numpy array
+        :param threshold: Threshold for which pixels should be cleaned and which should be untouched
+        :type threshold: float
         """
         indmax = np.unravel_index(np.argmax(spectrogram, axis=None), spectrogram.shape)
         min_time = max_time = indmax[1]
@@ -504,7 +527,16 @@ class Generator():
 
     def _adjust_amplitude(self, timeseries, PSD, requiredSNR):
         """
-        Calculate's the Signal to noise ratio for a given glitch.
+        Helper function that calculate's the signal to noise ratio for a given glitch.
+
+        :param timeseries: The timeseries of the glitch
+        :type timeseries: numpy array
+        :param PSD: The PSD that is used to calculate the SNR.
+        :type PSD: numpy array
+        :param requiredSNR: the SNR that the user wants the glitch to be.
+        :type requiredSNR: float
+        :return: The timeseries of the glitch, which has had its amplitude adjusted to match the SNR that is desired.
+        :rtype: numpy array
         """
 
         fs = 4096
@@ -538,7 +570,18 @@ class Generator():
 
       
     def _add_gaussian_noise(self, timeseries, PSD, duration):
-        
+        """
+        Helper function that adds gaussian noise to the given timeseries.
+
+        :param timeseries: The timeseries that is noise is added to
+        :type timeseries: numpy array
+        :param PSD: The PSD that is used to generate the gaussian noise, so it fits with the timeseries.
+        :type PSD: numpy array
+        :param duration: The length of the timeseries, in seconds
+        :type duration: float
+        :return: the timeseries with added noise
+        :rtype: numpy array
+        """
         fs = 4096
         df = 1 / duration
         f_min = 10
