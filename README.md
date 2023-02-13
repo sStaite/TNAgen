@@ -7,24 +7,23 @@ TNAgen is a python package that allows users to generate transient noise artifac
 ## Table of contents
 * [Installation](#Installation)
 * [Documentation](#Documentation)
-* [Examples](#Examples)
 * [Contributors](#Contributors)
 
 ## Installation
 
 Using pip: 
 ```console
-$ pip install NOT_READY_YET
+$ pip install TNAgen
 ```
 
 Using conda:
 ```console
-$ conda install NOT_READY_YET
+$ conda install TNAgen
 ```
 
 From Source:
 ```console
-$ git clone NOT_READY_YET
+$ git clone https://github.com/sStaite/TNAgen
 $ cd TNAgen
 $ python setup.py install
 ```
