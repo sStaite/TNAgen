@@ -1,7 +1,4 @@
 To do:
-    Resample noise curve
-    Calculate SNR
-    Gaussian noise generation 
     Automate glitch cleaning
     Should the save as timeseries return an array?
 
