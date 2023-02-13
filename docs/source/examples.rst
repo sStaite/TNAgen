@@ -15,19 +15,19 @@ Generating and saving 50 Koi Fish glitches as images of spectrograms:
     generator.generate("Koi_Fish", 50)
     generator.save_as_png("path/to/file", clear_queue=True)
 
-Generating and saving 2 of each glitch and saving as time-series in a hdf5 file:
+Generating and saving 2 of each glitch, each with a SNR of 12, and saving as time-series in a gwf file:
 
 .. code-block:: python
 
     generator.generate_all(2)
-    generator.save_as_hdf5("path/to/file", "name", SNR=12, clear_queue=True)
+    generator.save_as_hdf5("path/to/file", "name", SNR=12, format="gwf", clear_queue=True)
 
 Generating and saving 96 Blip glitches and saving as time-series in a gwf file:
 
 .. code-block:: python
 
     generator.generate("Blip", 96)
-    generator.save_as_hdf5("path/to/file", "name", clear_queue=True)
+    generator.save_as_hdf5("path/to/file", "name", format="hdf5", clear_queue=True)
 
 
 Generating raw data (numpy arrays) for 50 Chirp glitches:

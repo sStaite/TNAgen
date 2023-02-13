@@ -83,14 +83,14 @@
 <span class="n">generator</span><span class="o">.</span><span class="n">save_as_png</span><span class="p">(</span><span class="s2">&quot;path/to/file&quot;</span><span class="p">,</span> <span class="n">clear_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Generating and saving 2 of each glitch and saving as time-series in a hdf5 file:</p>
+<p>Generating and saving 2 of each glitch, each with a SNR of 12, and saving as time-series in a gwf file:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">generator</span><span class="o">.</span><span class="n">generate_all</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">generator</span><span class="o">.</span><span class="n">save_as_hdf5</span><span class="p">(</span><span class="s2">&quot;path/to/file&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">SNR</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">clear_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">save_as_hdf5</span><span class="p">(</span><span class="s2">&quot;path/to/file&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">SNR</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;gwf&quot;</span><span class="p">,</span> <span class="n">clear_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Generating and saving 96 Blip glitches and saving as time-series in a gwf file:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">generator</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="s2">&quot;Blip&quot;</span><span class="p">,</span> <span class="mi">96</span><span class="p">)</span>
-<span class="n">generator</span><span class="o">.</span><span class="n">save_as_hdf5</span><span class="p">(</span><span class="s2">&quot;path/to/file&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">clear_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">save_as_hdf5</span><span class="p">(</span><span class="s2">&quot;path/to/file&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;hdf5&quot;</span><span class="p">,</span> <span class="n">clear_queue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Generating raw data (numpy arrays) for 50 Chirp glitches:</p>
