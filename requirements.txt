@@ -7,5 +7,6 @@ scipy
 matplotlib
 librosa
 h5py>=3.2.1
+gwpy
 python-framel
 

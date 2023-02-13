@@ -8,6 +8,8 @@ First, we need to import the Generator module and instatiate a Generator object.
     from TNAgen import Generator
     generator = Generator.Generator()
 
+To find a list of the names of glitches that can be generated, along with example spectrograms of each glitch, go to the Glitch Names tab.
+
 Generating and saving 50 Koi Fish glitches as images of spectrograms:
 
 .. code-block:: python

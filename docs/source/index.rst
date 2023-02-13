@@ -25,6 +25,7 @@ At the moment, there are only a few functions up and running, but the package is
 
    API
    examples 
+   glitch_names
 
 ----------
 

@@ -13,8 +13,9 @@ def testGenerator(testing):
         generator.generate(test, 32, clean=True)
         #generator.save_as_png("src/data/sanity_images")
 
-    glitch_times = generator.save_as_timeseries(path="src/data/sanity_images", name="test", noise=True, SNR=12, clear_queue=True)
-    return glitch_times
+    generator.save_as_timeseries(path="src/data/sanity_images", name="test", noise=True, SNR=12)
+    #generator.save_as_png("src/data/sanity_images")
+    #generator.save_as_array("src/data/sanity_images", clear_queue=True)
 
 
 def testRest(testing, glitch_times):
@@ -25,11 +26,12 @@ def testRest(testing, glitch_times):
 
     plot = Plot(strain, white, separate=True, sharex=True, color="forestgreen")
     ax = plot.gca()
-    ax.set_xlim(0, 32)
     plot.refresh()
     plot.savefig("src/data/sanity_images/comparison.png")
     plot.close()
 
+    # This can be used to display an image of a glitch in spectrogram
+    """
     p = 0; i = 0
     while p < 0.25:
         p = glitch_times[i]
@@ -65,36 +67,7 @@ def testRest(testing, glitch_times):
     fig = plot.get_figure()
     fig.savefig("src/data/sanity_images/spectrogram_q.png")
     plt.close()
-
     """
-    plt.plot(strain, 'forestgreen')
-    plt.xlabel("Time (Seconds)")
-    plt.savefig("src/data/sanity_images/timeseries.png")
-    plt.xlim(1.85, 2)
-    plt.savefig("src/data/sanity_images/timeseries_short.png")
-    plt.close()
-    """
-
-def testSpectrogram():
-    filepath = "src/data/sanity_images/test.gwf"
-
-    strain = TimeSeries.read(filepath)
-
-    fs = 4096
-
-    NFFT = int(fs/16.)
-    NOVL = int(NFFT*15./16)
-
-    window = np.blackman(NFFT)
-    spec_cmap='viridis'
-    
-def test_array_save():
-    generator = Generator()
-
-    for test in testing:
-        generator.generate(test, 3, clean=True)
-
-    generator.save_as_array("src/data/sanity_images", "test")
 
 
 if __name__ == "__main__":
@@ -104,9 +77,6 @@ if __name__ == "__main__":
 
     testing = ["Chirp", "Blip", "Koi_Fish"]
 
-    #g = testGenerator(testing)
-    #testRest(testing, g)
-    #testSpectrogram()
-    test_array_save()
-
+    #testGenerator(testing)
+    #testRest(testing)
     
