@@ -26,15 +26,11 @@ Below we can see a spectrogram of all X glitches, and the name to be used to gen
 
         "Chirp"
 
-      - .. figure:: /images/Extremely_Loud.png
-
-        "Extremely_Loud"
-
-    * - .. figure:: /images/Helix.png
+      - .. figure:: /images/Helix.png
 
         "Helix"
 
-      - .. figure:: /images/Koi_Fish.png
+    * - .. figure:: /images/Koi_Fish.png
 
         "Koi_Fish"
 
@@ -42,19 +38,15 @@ Below we can see a spectrogram of all X glitches, and the name to be used to gen
 
         "Light_Modulation"
 
-    * - .. figure:: /images/Low_Frequency_Burst.png
+      - .. figure:: /images/Low_Frequency_Burst.png
 
         "Low_Frequency_Burst"
 
-      - .. figure:: /images/Low_Frequency_Lines.png
+    * - .. figure:: /images/Low_Frequency_Lines.png
 
         "Low_Frequency_Lines"
 
-      - .. figure:: /images/No_Glitch.png
-
-        "No_Glitch"
-
-    * - .. figure:: /images/None_of_the_Above.png
+      - .. figure:: /images/None_of_the_Above.png
 
         "None_of_the_Above"
 
@@ -62,11 +54,11 @@ Below we can see a spectrogram of all X glitches, and the name to be used to gen
 
         "Paired_Doves"
 
-      - .. figure:: /images/Power_Line.png
+    * - .. figure:: /images/Power_Line.png
 
         "Power_Line"
 
-    * - .. figure:: /images/Repeating_Blips.png
+      - .. figure:: /images/Repeating_Blips.png
 
         "Repeating_Blips"
 
@@ -74,11 +66,11 @@ Below we can see a spectrogram of all X glitches, and the name to be used to gen
 
         "Scattered_Light"
 
-      - .. figure:: /images/Scratchy.png
+    * - .. figure:: /images/Scratchy.png
 
         "Scratchy"
 
-    * - .. figure:: /images/Tomte.png
+      - .. figure:: /images/Tomte.png
 
         "Tomte"
 
@@ -86,14 +78,13 @@ Below we can see a spectrogram of all X glitches, and the name to be used to gen
 
         "Violin_Mode"
 
-      - .. figure:: /images/Wandering_Line.png
+    * - .. figure:: /images/Wandering_Line.png
 
         "Scratchy"
 
-    * - .. figure:: /images/Whistle.png
+      - .. figure:: /images/Whistle.png
         
         "Whistle"
 
       -
 
-      -

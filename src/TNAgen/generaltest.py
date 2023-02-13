@@ -18,7 +18,7 @@ def testGenerator(testing):
     #generator.save_as_array("src/data/sanity_images", clear_queue=True)
 
 
-def testRest(testing, glitch_times):
+def testRest():
 
     filepath = "src/data/sanity_images/test.gwf"
     strain = TimeSeries.read(filepath, "test")
@@ -26,6 +26,7 @@ def testRest(testing, glitch_times):
 
     plot = Plot(strain, white, separate=True, sharex=True, color="forestgreen")
     ax = plot.gca()
+    plt.xlim(0, np.ceil(len(strain)/4096))
     plot.refresh()
     plot.savefig("src/data/sanity_images/comparison.png")
     plot.close()
@@ -71,12 +72,18 @@ def testRest(testing, glitch_times):
 
 
 if __name__ == "__main__":
-    all = ["1080Lines", "Extremely_Loud", "Helix", "Light_Modulation",
-            "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Wandering_Line", "Whistle",
+    all = ["1080Lines", "Helix", "Light_Modulation",
+            "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Whistle", "Wandering_Line",
             "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
 
-    testing = ["Chirp", "Blip", "Koi_Fish"]
+    testing = ["Low_Frequency_Lines"]
 
-    #testGenerator(testing)
-    #testRest(testing)
-    
+    testGenerator(testing)
+    testRest()
+
+    # Low Freq Lines may have less glitches -> this is due to some having too low frequency to be convered into a timeseries
+    # Look at Whistle
+
+    # Extremely loud
+    # No glitch
+    # None of the above

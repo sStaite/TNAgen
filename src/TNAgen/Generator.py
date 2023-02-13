@@ -246,6 +246,10 @@ class Generator():
             # Then we need to adjust the amplitude of the timeseries for the required SNR.
             curr_time_series = self._adjust_amplitude(curr_time_series, self.PSD, SNR)
 
+            # Check that the time series exists
+            if curr_time_series is None:
+                continue
+
             # Find the starting position of the glitch
             if position is None:
                 curr_pos = np.random.choice(np.arange(len(timeseries[:, 0])) - len(curr_time_series) // 2)
@@ -256,14 +260,14 @@ class Generator():
 
             # Add the glitch in
             # This code just lets the data from the glitch be put anywhere on the timeseries
-            for i in range(len(curr_time_series)):
-                if (curr_pos + i >= length * 4096):
+            for j in range(len(curr_time_series)):
+                if (curr_pos + j >= length * 4096):
                     break
-                if (curr_pos + i >= 0):
-                    timeseries[curr_pos + i, 1] += curr_time_series[i]
+                if (curr_pos + j >= 0):
+                    timeseries[curr_pos + j, 1] += curr_time_series[j]
 
 
-            self._timer("Saving timeseries:", i+1, len(self.curr_array))
+            self._timer("Saving timeseries:", i+1, len(self.curr_glitch))
             index+=1
 
         # Save dataset
@@ -393,7 +397,7 @@ class Generator():
             threshold = 0.30
             if glitch in ["Low_Frequency_Lines", "Paired_Doves"]: 
                 threshold = 0.25
-
+                
             self._clean_vertically(spectrogram, threshold)
             self._clean_horizontally(spectrogram, threshold)
             spectrogram[spectrogram < threshold] = 0
@@ -543,6 +547,11 @@ class Generator():
 
         # Convert the timeseries into freqsignal
         freq_signal = np.fft.rfft(timeseries) / fs 
+
+        # If our frequency signal is not produced correctly, return None
+        if (np.sum(freq_signal) == 0):
+            return None 
+
         freq_values = np.fft.fftfreq(len(timeseries), d=1./fs)
         
         # Get only the frequencies between 8Hz and 2048Hz
