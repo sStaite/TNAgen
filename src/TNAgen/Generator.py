@@ -7,7 +7,6 @@ import pandas as pd
 import librosa
 from scipy import signal, interpolate
 from gwpy.timeseries import TimeSeries
-from gwpy.detector import Channel
 import h5py
 import framel
 
@@ -200,11 +199,11 @@ class Generator():
     def save_as_timeseries(self, path, name="timeseries", noise=True, length="Default", position=None, SNR=10, format="gwf", clear_queue=False):
         """
         Saves the queue of artifacts in a file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
-        Sample rate and the position of the glitches are saved into the file.
+        Sample rate and the position of the glitches are saved into the file. The channel name of the timeseries is the same as the name of the file.
 
         :param path: Folder where the timeseries file will be created
         :type path: str
-        :param name: name of the file, defaults to "timeseries"
+        :param name: name of the file and the channel in the file, defaults to "timeseries"
         :type name: str, optional
         :param noise: Whether or not gaussian noise should be added to the timeseries (Note - for best results, set clean=True in the generation of the glitches
          if noise=True is wanted), defaults to True
@@ -288,8 +287,6 @@ class Generator():
 
         if clear_queue:
             self._clear_queue()
-
-        return glitch_times
 
 
     def save_as_array(self, path, name="glitch_file", clear_queue=False):
