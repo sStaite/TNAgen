@@ -8,6 +8,7 @@ import librosa
 from scipy import signal, interpolate
 from gwpy.timeseries import TimeSeries
 import h5py
+import os
 import framel
 
 class Generator():
@@ -17,6 +18,9 @@ class Generator():
     """
 
     def __init__(self):
+
+        cwd = os.getcwd()
+        print(cwd)
 
         # Initialize empty lists to store generated images and labels
         self.curr_array = []
@@ -42,11 +46,11 @@ class Generator():
             device = torch.device("cpu")
 
         # Get the list of glitches
-        self.label_df = pd.read_csv('src/data/array_to_label_conversion.csv')
+        self.label_df = pd.read_csv('TNAgen/data/array_to_label_conversion.csv')
         self.glitches = self.label_df['label'].tolist()
 
         # Get the standard PSD
-        self.PSD = np.swapaxes(np.loadtxt('src/data/ALIGO_noise_curve.txt'), 0, 1)
+        self.PSD = np.swapaxes(np.loadtxt('TNAgen/data/ALIGO_noise_curve.txt'), 0, 1)
 
 
     def generate(self, glitch, n_images_to_generate=10, clean=True):
@@ -69,7 +73,7 @@ class Generator():
         np_array = np.zeros((n_images_to_generate, 140, 170))
 
         # Load model weights for the specified glitch
-        model_weights_file = "src/data/models/{}_GAN.model".format(glitch)
+        model_weights_file = "TNAgen/data/models/{}_GAN.model".format(glitch)
         state_dict = torch.load(model_weights_file, map_location='cpu')
         self.generator.load_state_dict(state_dict)
         
@@ -128,7 +132,7 @@ class Generator():
 
         # Iterate over each glitch and generate the images
         for glitch in self.glitches:
-            model_weights_file = "src/data/models/{}_GAN.model".format(glitch)
+            model_weights_file = "TNAgen/data/models/{}_GAN.model".format(glitch)
             state_dict = torch.load(model_weights_file, map_location='cpu')
             self.generator.load_state_dict(state_dict)
             
@@ -364,7 +368,7 @@ class Generator():
         ax.invert_yaxis()
         ax.set_yticks(ticks = np.arange(0, 140, 140/6), labels = np.arange(8, 2048, 340))
         ax.set_xticks(ticks = np.arange(0, 170, 170/8), labels = np.arange(0, 2, 0.25))
-        plt.savefig("src/data/sanity_images/specundistort.png")     
+        plt.savefig("TNAgen/data/sanity_images/specundistort.png")     
         plt.close()  
         """        
 

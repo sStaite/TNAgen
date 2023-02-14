@@ -6,21 +6,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn 
 
+
 def testGenerator(testing):
+
     generator = Generator()
 
     for test in testing:
         generator.generate(test, 32, clean=False)
-        #generator.save_as_png("src/data/sanity_images")
+        #generator.save_as_png("data/sanity_images")
 
-    generator.save_as_timeseries(path="src/data/sanity_images", name="test", noise=True, SNR=12)
-    #generator.save_as_png("src/data/sanity_images")
-    #generator.save_as_array("src/data/sanity_images", clear_queue=True)
+    #generator.save_as_timeseries(path="data/sanity_images", name="test", noise=True, SNR=12)
+    #generator.save_as_png("data/sanity_images")
+    #generator.save_as_array("data/sanity_images", clear_queue=True)
 
 
 def testRest():
 
-    filepath = "src/data/sanity_images/test.gwf"
+    filepath = "TNAgen/data/sanity_images/test.gwf"
     strain = TimeSeries.read(filepath, "test")
     white = strain.whiten()
 
@@ -28,7 +30,7 @@ def testRest():
     ax = plot.gca()
     plt.xlim(0, np.ceil(len(strain)/4096))
     plot.refresh()
-    plot.savefig("src/data/sanity_images/comparison.png")
+    plot.savefig("TNAgen/data/sanity_images/comparison.png")
     plot.close()
 
     # This can be used to display an image of a glitch in spectrogram
@@ -53,7 +55,7 @@ def testRest():
     plt.ylabel('frequency (Hz)',fontsize=14)
     plt.yscale('log', base=2)
     plt.colorbar(cmap=spec_cmap, label="Normalized energy")
-    plt.savefig("src/data/sanity_images/spectrogram_jade.png")
+    plt.savefig("TNAgen/data/sanity_images/spectrogram_jade.png")
     plt.close()
 
     qspecgram = np.array(white[out[0]: out[1]].q_transform())
@@ -66,7 +68,7 @@ def testRest():
     plot.set_yscale('log', base=2)
 
     fig = plot.get_figure()
-    fig.savefig("src/data/sanity_images/spectrogram_q.png")
+    fig.savefig("TNAgen/data/sanity_images/spectrogram_q.png")
     plt.close()
     """
 
