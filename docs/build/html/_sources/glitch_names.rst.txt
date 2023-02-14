@@ -2,7 +2,7 @@ Glitch Names
 ============
 
 To use the generate function, the name of the glitch that you want must be given to the 'glitch' parameter. 
-Below we can see a spectrogram of all X glitches, and the name to be used to generate glitches  
+Below we can see a spectrogram of all X glitches, and the name to be used to generate each individual one.  
 
 .. list-table::
 
@@ -46,19 +46,15 @@ Below we can see a spectrogram of all X glitches, and the name to be used to gen
 
         "Low_Frequency_Lines"
 
-      - .. figure:: /images/None_of_the_Above.png
-
-        "None_of_the_Above"
-
       - .. figure:: /images/Paired_Doves.png
 
         "Paired_Doves"
 
-    * - .. figure:: /images/Power_Line.png
+      - .. figure:: /images/Power_Line.png
 
         "Power_Line"
 
-      - .. figure:: /images/Repeating_Blips.png
+    * - .. figure:: /images/Repeating_Blips.png
 
         "Repeating_Blips"
 
@@ -66,11 +62,11 @@ Below we can see a spectrogram of all X glitches, and the name to be used to gen
 
         "Scattered_Light"
 
-    * - .. figure:: /images/Scratchy.png
+      - .. figure:: /images/Scratchy.png
 
         "Scratchy"
 
-      - .. figure:: /images/Tomte.png
+    * - .. figure:: /images/Tomte.png
 
         "Tomte"
 
@@ -78,13 +74,15 @@ Below we can see a spectrogram of all X glitches, and the name to be used to gen
 
         "Violin_Mode"
 
-    * - .. figure:: /images/Wandering_Line.png
+      - .. figure:: /images/Wandering_Line.png
 
         "Scratchy"
 
-      - .. figure:: /images/Whistle.png
+    * - .. figure:: /images/Whistle.png
         
         "Whistle"
 
       -
+
+      - 
 

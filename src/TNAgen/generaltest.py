@@ -10,7 +10,7 @@ def testGenerator(testing):
     generator = Generator()
 
     for test in testing:
-        generator.generate(test, 32, clean=True)
+        generator.generate(test, 32, clean=False)
         #generator.save_as_png("src/data/sanity_images")
 
     generator.save_as_timeseries(path="src/data/sanity_images", name="test", noise=True, SNR=12)
@@ -76,14 +76,10 @@ if __name__ == "__main__":
             "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Whistle", "Wandering_Line",
             "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
 
-    testing = ["Low_Frequency_Lines"]
+    testing = ["Chirp"]
 
     testGenerator(testing)
     testRest()
 
-    # Low Freq Lines may have less glitches -> this is due to some having too low frequency to be convered into a timeseries
-    # Look at Whistle
-
-    # Extremely loud
-    # No glitch
-    # None of the above
+    # Low Freq Lines may have less glitches -> this is due to some having too low frequency to be convered into a timeseries -> think this is okay
+    # Whistle does not look like actual whistle glitches

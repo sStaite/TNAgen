@@ -342,7 +342,7 @@ class Generator():
 
         freq_values = np.logspace(3, 11, 140, base=2)
         arr = np.linspace(8, 2048, 140)
-
+        
         f = interpolate.interp1d(arr, spectrogram[:, 0])
         spec = np.zeros((1, 140))
         spec[0] = np.array(f(freq_values))
@@ -355,18 +355,18 @@ class Generator():
             spec = np.concatenate((spec, new))
         
         spec = np.swapaxes(spec, 0, 1)
-        #spec = np.flip(spec)
+        #spec = np.flip(spec, axis=0)
 
-        '''
-        fig, ax = plt.subplots(figsize=(10,10))
-        im = ax.imshow(spec)
+        """
+        f, ax = plt.subplots(figsize=(8.5, 7))
+        ax.imshow(spec)
         ax.set_title("Spectrogram Undistorted", size=20)
-        #ax.invert_yaxis()
+        ax.invert_yaxis()
         ax.set_yticks(ticks = np.arange(0, 140, 140/6), labels = np.arange(8, 2048, 340))
-        fig.tight_layout()
+        ax.set_xticks(ticks = np.arange(0, 170, 170/8), labels = np.arange(0, 2, 0.25))
         plt.savefig("src/data/sanity_images/specundistort.png")     
         plt.close()  
-        '''
+        """        
 
         time_series = librosa.griffinlim(spec, n_iter=64)
         time_series[1::2] *= -1            
