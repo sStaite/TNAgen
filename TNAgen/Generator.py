@@ -19,9 +19,6 @@ class Generator():
 
     def __init__(self):
 
-        cwd = os.getcwd()
-        print(cwd)
-
         # Initialize empty lists to store generated images and labels
         self.curr_array = []
         self.curr_glitch = []
@@ -45,12 +42,15 @@ class Generator():
         else:
             device = torch.device("cpu")
 
+        labelfile = os.path.join(os.path.dirname(__file__), 'data/array_to_label_conversion.csv')
+        noisecurvefile = os.path.join(os.path.dirname(__file__), 'data/ALIGO_noise_curve.txt')
+
         # Get the list of glitches
-        self.label_df = pd.read_csv('TNAgen/data/array_to_label_conversion.csv')
+        self.label_df = pd.read_csv(labelfile)
         self.glitches = self.label_df['label'].tolist()
 
         # Get the standard PSD
-        self.PSD = np.swapaxes(np.loadtxt('TNAgen/data/ALIGO_noise_curve.txt'), 0, 1)
+        self.PSD = np.swapaxes(np.loadtxt(noisecurvefile), 0, 1)
 
 
     def generate(self, glitch, n_images_to_generate=10, clean=True):
@@ -73,7 +73,7 @@ class Generator():
         np_array = np.zeros((n_images_to_generate, 140, 170))
 
         # Load model weights for the specified glitch
-        model_weights_file = "TNAgen/data/models/{}_GAN.model".format(glitch)
+        model_weights_file = os.path.join(os.path.dirname(__file__), "data/models/{}_GAN.model".format(glitch))
         state_dict = torch.load(model_weights_file, map_location='cpu')
         self.generator.load_state_dict(state_dict)
         
@@ -132,7 +132,7 @@ class Generator():
 
         # Iterate over each glitch and generate the images
         for glitch in self.glitches:
-            model_weights_file = "TNAgen/data/models/{}_GAN.model".format(glitch)
+            model_weights_file = os.path.join(os.path.dirname(__file__), "data/models/{}_GAN.model".format(glitch))
             state_dict = torch.load(model_weights_file, map_location='cpu')
             self.generator.load_state_dict(state_dict)
             
@@ -331,7 +331,7 @@ class Generator():
         f.close()
 
         if clear_queue:
-            self._clear_queue()
+            self._clear_queue() 
 
 
     def _convert_to_timeseries(self, spectrogram):
