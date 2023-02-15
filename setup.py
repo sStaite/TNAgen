@@ -18,6 +18,7 @@ setuptools.setup(
         'https://github.com/sStaite/TNAgen/issues',
         'Source Code': 'https://github.com/sStaite/TNAgen',
     },
+    include_package_data=True,
     package_dir={'': 'src'},
     packages=setuptools.find_packages(where='src'),
     classifiers=[
