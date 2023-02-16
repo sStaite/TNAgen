@@ -1,9 +1,11 @@
 To do:
-    Automate glitch cleaning
-    Should the save as timeseries return an array?
+    Otsu's thresholding:
+        read about it
+        check it works in all glitch cases
+        openCV is too big! write own script (in C or Cython?)
 
-Misc:
-    Comment on code
-    Clean up code
-    Beautify readthedocs
+    delete extra files for models that are not being used - also, get git lfs working!
+
+    look at paper jade sent - generate the whistle glitch from a mathematical formula
+
 
