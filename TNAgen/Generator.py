@@ -190,7 +190,7 @@ class Generator():
             index = count_dict[self.curr_glitch[i]]
             count_dict[self.curr_glitch[i]] += 1
             
-            plt.imsave(path + f"/{self.curr_glitch[i]}_{index}.png", self.curr_array[i])
+            plt.imsave("TNAgen/" + path + f"/{self.curr_glitch[i]}_{index}.png", self.curr_array[i])
 
             self._timer("Saving images:    ", i+1, len(self.curr_array))
 
@@ -283,7 +283,7 @@ class Generator():
         # Save the dataset
         if format == "gwf":
             t = TimeSeries(timeseries, sample_rate=4096, name=f'{name}', channel="CHANNEL")
-            t.write(path + f"/{name}.gwf")
+            t.write("TNAgen/" + path + f"/{name}.gwf")
         elif format == "hdf5":
             filepath = path + f"/{name}.hdf5"
             f = h5py.File(filepath, "w")

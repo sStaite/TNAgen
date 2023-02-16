@@ -12,10 +12,10 @@ def testGenerator(testing):
     generator = Generator()
 
     for test in testing:
-        generator.generate(test, 32, clean=False)
+        generator.generate(test, 8, clean=True)
         #generator.save_as_png("data/sanity_images")
 
-    #generator.save_as_timeseries(path="data/sanity_images", name="test", noise=True, SNR=12)
+    generator.save_as_timeseries(path="data/sanity_images", name="test", noise=True, SNR=12, length=20)
     #generator.save_as_png("data/sanity_images")
     #generator.save_as_array("data/sanity_images", clear_queue=True)
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
             "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Whistle", "Wandering_Line",
             "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
 
-    testing = ["Chirp"]
+    testing = ["Whistle"]
 
     testGenerator(testing)
     testRest()

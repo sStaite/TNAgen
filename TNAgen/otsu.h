@@ -1,2 +1,0 @@
-
-int square(int i);
