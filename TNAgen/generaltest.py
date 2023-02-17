@@ -13,11 +13,11 @@ def testGenerator(testing):
 
     for test in testing:
         generator.generate(test, 8, clean=True)
-        #generator.save_as_png("data/sanity_images")
+        #generator.save_as_png("TNAgen/data/sanity_images")
 
-    generator.save_as_timeseries(path="data/sanity_images", name="test", noise=True, SNR=12, length=20)
-    #generator.save_as_png("data/sanity_images")
-    #generator.save_as_array("data/sanity_images", clear_queue=True)
+    generator.save_as_timeseries(path="TNAgen/data/sanity_images", name="test", noise=True, SNR=12, length=20)
+    #generator.save_as_png("TNAgen/data/sanity_images")
+    #generator.save_as_array("TNAgen/data/sanity_images", clear_queue=True)
 
 
 def testRest():

@@ -22,6 +22,7 @@ class Generator():
         # Initialize empty lists to store generated images and labels
         self.curr_array = []
         self.curr_glitch = []
+        self.curr_SNR = []
 
         # Set up the generator  parameters
         gen_args = {
@@ -53,7 +54,7 @@ class Generator():
         self.PSD = np.swapaxes(np.loadtxt(noisecurvefile), 0, 1)
 
 
-    def generate(self, glitch, n_images_to_generate=10, clean=True):
+    def generate(self, glitch, n_images_to_generate=10, SNR=10, clean=True):
         """
         Generates images for the given glitch in the form of numpy arrays, and adds it to the 'queue'.
 
@@ -61,6 +62,13 @@ class Generator():
         :type glitch: str
         :param n_images_to_generate: Number of images to be generated, defaults to 10
         :type n_images_to_generate: int, optional 
+        :param SNR: The signal to noise ratio for the glitches, defaults to 10 for all glitches
+            Input can be: float - a constant SNR for all glitches generated.
+                          array - an array of SNR for each individual glitch. The order of the SNRs given matches up to the order the glitches are generated. 
+                                  One may use np.random.normal(mean, std, n_images_to_generate) in order to generate a normal distribution or 
+                                              np.random.uniform(low, high, n_images_to_generate) in order to generate a uniform distribution
+                          str   - "realistic", which assigns a differing SNR to each glitch based on their distribution seen in LIGOs observing runs.
+        :type SNR: Any, optional
         :param clean: Whether or not to remove the background noise from the generated glitches, defaults to True
         :type clean: bool, optional
         :return: A (n_images_to_generate x 140 x 170) numpy array of the images generated 
@@ -81,6 +89,22 @@ class Generator():
         inputs = []
         outputs = []
         label_list = []
+
+        if len(SNR) == 1: # We have a constant SNR for all glitches
+            SNR_list = [SNR for x in range(n_images_to_generate)]
+        elif type(SNR) == list or type(SNR) == np.ndarray: # We have an array of times
+            if len(SNR) != n_images_to_generate:
+                raise Exception("The length of the SNR array is not 'n_images_to_generate'.")
+            SNR_list = SNR
+        elif type(SNR) == str:
+            if SNR == "realistic":
+                SNR_list = self._create_realistic(glitch, n_images_to_generate)
+            else:
+                raise Exception("The string used for the SNR array is not recognised")
+        else:
+            raise Exception("The input type for the SNR is not recognised")
+
+
         for i in range(n_images_to_generate):
             inputs.append(self.generator.sampler(1,torch.device('cpu')))
             
@@ -104,9 +128,12 @@ class Generator():
         if len(self.curr_array) == 0:
             self.curr_array = np_array
             self.curr_glitch = label_list
+            self.curr_SNR = SNR_list
         else:
             self.curr_array = np.concatenate((self.curr_array, np_array), axis=0)
             self.curr_glitch += label_list
+            self.curr_SNR += SNR_list
+
 
         return (np_array, label_list)
 
@@ -190,7 +217,7 @@ class Generator():
             index = count_dict[self.curr_glitch[i]]
             count_dict[self.curr_glitch[i]] += 1
             
-            plt.imsave("TNAgen/" + path + f"/{self.curr_glitch[i]}_{index}.png", self.curr_array[i])
+            plt.imsave(path + f"/{self.curr_glitch[i]}_{index}.png", self.curr_array[i])
 
             self._timer("Saving images:    ", i+1, len(self.curr_array))
 
@@ -200,7 +227,7 @@ class Generator():
             self._clear_queue()
 
 
-    def save_as_timeseries(self, path, name="timeseries", noise=True, length="Default", position=None, SNR=10, format="gwf", clear_queue=False):
+    def save_as_timeseries(self, path, name="timeseries", noise=True, length="Default", position=None, format="gwf", t0=1238166018.0, clear_queue=False):
         """
         Saves the queue of artifacts in a file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
         Sample rate and the position of the glitches are saved into the file. The channel name of the timeseries is the same as the name of the file.
@@ -216,10 +243,10 @@ class Generator():
         :type length: float, optional
         :param position: The positions of the start of glitches and must be a list or numpy array of size len(self.glitches), with the positons give in seconds, defaults to None
         :type position: list, optional
-        :param SNR: The signal to noise ratio for the glitches, defaults to 10
-        :type SNR: float, optional
         :param format: Name of the format that the file will be saved as with pptions "gwf", "hdf5", defaults to "gwf"
         :type format: str, optional
+        :param t0: The time (GPS epoch) inserted into the file as the start gps time of the timeseries, defaults to 1238166018.0 (start of O3 run) 
+        :type t0: float, optional
         :param clear_queue: Value for if the queue will be cleared after the images are saved, defaults to False
         :type clear_queue: bool, optional
         """
@@ -246,9 +273,6 @@ class Generator():
             index = count_dict[self.curr_glitch[i]]
             count_dict[self.curr_glitch[i]] += 1
             curr_time_series = self._convert_to_timeseries(self.curr_array[i])
-
-            # Then we need to adjust the amplitude of the timeseries for the required SNR.
-            curr_time_series = self._adjust_amplitude(curr_time_series, self.PSD, SNR)
 
             # Check that the time series exists
             if curr_time_series is None:
@@ -280,16 +304,13 @@ class Generator():
         if noise:
             timeseries = self._add_gaussian_noise(timeseries, self.PSD, duration=length) 
 
+        t = TimeSeries(timeseries, sample_rate=4096, t0=t0, name=f'{name}', channel="CHANNEL")
+
         # Save the dataset
         if format == "gwf":
-            t = TimeSeries(timeseries, sample_rate=4096, name=f'{name}', channel="CHANNEL")
-            t.write("TNAgen/" + path + f"/{name}.gwf")
+            t.write(path + f"/{name}.gwf")
         elif format == "hdf5":
-            filepath = path + f"/{name}.hdf5"
-            f = h5py.File(filepath, "w")
-            f.create_dataset(f"/{name}", data=timeseries, compression="gzip")
-            f.flush()
-            f.close()
+            t.write(path + f"/{name}.hdf5")
         else:
             raise Exception(f"The format {format} cannot be used.")
 
@@ -375,6 +396,8 @@ class Generator():
         time_series = librosa.griffinlim(spec, n_iter=64)
         time_series[1::2] *= -1            
         time_series = signal.resample(time_series, 8192)
+
+        # NEED TO ADJUST SNR here
 
         return time_series
 
@@ -617,4 +640,18 @@ class Generator():
         timeseries += time_domain_noise
 
         return timeseries
+
+
+    def _create_realistic(self, glitch, n_images_to_generate):
+        """
+        Helper function that creates an array of SNRs that are feasible for the given glitch.
+
+        :param glitch: The glitch that we want SNRs for
+        :type glitch: str
+        :param n_images_to_generate: The number of SNRs we need
+        :type n_images_to_generate: int
+        :return: Array of SNRs.
+        :rtype: numpy array
+        """
+
 
