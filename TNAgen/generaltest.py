@@ -12,10 +12,10 @@ def testGenerator(testing):
     generator = Generator()
 
     for test in testing:
-        generator.generate(test, 8, clean=True)
+        generator.generate(test, 8, SNR=15, clean=True)
         #generator.save_as_png("TNAgen/data/sanity_images")
 
-    generator.save_as_timeseries(path="TNAgen/data/sanity_images", name="test", noise=True, SNR=12, length=20)
+    generator.save_as_timeseries(path="TNAgen/data/sanity_images", name="test", noise=True, length=20)
     #generator.save_as_png("TNAgen/data/sanity_images")
     #generator.save_as_array("TNAgen/data/sanity_images", clear_queue=True)
 
@@ -28,7 +28,7 @@ def testRest():
 
     plot = Plot(strain, white, separate=True, sharex=True, color="forestgreen")
     ax = plot.gca()
-    plt.xlim(0, np.ceil(len(strain)/4096))
+    plt.xlim(1238166018.0, 1238166018.0 + np.ceil(len(strain)/4096))
     plot.refresh()
     plot.savefig("TNAgen/data/sanity_images/comparison.png")
     plot.close()
@@ -78,7 +78,7 @@ if __name__ == "__main__":
             "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Whistle", "Wandering_Line",
             "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
 
-    testing = ["Whistle"]
+    testing = ["Tomte"]
 
     testGenerator(testing)
     testRest()

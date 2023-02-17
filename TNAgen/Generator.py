@@ -54,7 +54,7 @@ class Generator():
         self.PSD = np.swapaxes(np.loadtxt(noisecurvefile), 0, 1)
 
 
-    def generate(self, glitch, n_images_to_generate=10, SNR=10, clean=True):
+    def generate(self, glitch, n_images_to_generate=10, SNR=10., clean=True):
         """
         Generates images for the given glitch in the form of numpy arrays, and adds it to the 'queue'.
 
@@ -93,7 +93,7 @@ class Generator():
         outputs = []
         label_list = []
 
-        if len(SNR) == 1: # We have a constant SNR for all glitches
+        if type(SNR) == float or type(SNR) == int: # We have a constant SNR for all glitches
             SNR_list = [SNR for x in range(n_images_to_generate)]
         elif type(SNR) == list or type(SNR) == np.ndarray: # We have an array of times
             if len(SNR) != n_images_to_generate:
@@ -275,7 +275,7 @@ class Generator():
             # First convert the spectrogram data to timeseries data
             index = count_dict[self.curr_glitch[i]]
             count_dict[self.curr_glitch[i]] += 1
-            curr_time_series = self._convert_to_timeseries(self.curr_array[i])
+            curr_time_series = self._convert_to_timeseries(self.curr_array[i], self.curr_SNR[i])
 
             # Check that the time series exists
             if curr_time_series is None:
@@ -304,10 +304,13 @@ class Generator():
         # Save dataset
         timeseries = np.swapaxes(timeseries, 0, 1)[1]
 
+        print([glitch_times[i] + 1 for i in range(len(glitch_times))])
+
+        # Add the gaussian noise
         if noise:
             timeseries = self._add_gaussian_noise(timeseries, self.PSD, duration=length) 
 
-        t = TimeSeries(timeseries, sample_rate=4096, t0=t0, name=f'{name}', channel="CHANNEL")
+        t = TimeSeries(timeseries, t0=t0, sample_rate=4096, name=f'{name}', channel="CHANNEL")
 
         # Save the dataset
         if format == "gwf":
@@ -358,7 +361,7 @@ class Generator():
             self._clear_queue() 
 
 
-    def _convert_to_timeseries(self, spectrogram):
+    def _convert_to_timeseries(self, spectrogram, SNR):
         """
         Helper function that converts the given spectrogram into a timeseries.
 
@@ -400,7 +403,7 @@ class Generator():
         time_series[1::2] *= -1            
         time_series = signal.resample(time_series, 8192)
 
-        # NEED TO ADJUST SNR here
+        time_series = self._adjust_amplitude(time_series, self.PSD, SNR)
 
         return time_series
 
@@ -572,9 +575,6 @@ class Generator():
 
         fs = 4096
 
-        amp = 1e-20 # Give the glitch a realistic amplitude
-        timeseries *= amp
-
         # Convert the timeseries into freqsignal
         freq_signal = np.fft.rfft(timeseries) / fs 
 
@@ -656,5 +656,7 @@ class Generator():
         :return: Array of SNRs.
         :rtype: numpy array
         """
+
+        return [10 for n in range(n_images_to_generate)]
 
 
