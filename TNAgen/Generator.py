@@ -62,12 +62,15 @@ class Generator():
         :type glitch: str
         :param n_images_to_generate: Number of images to be generated, defaults to 10
         :type n_images_to_generate: int, optional 
-        :param SNR: The signal to noise ratio for the glitches, defaults to 10 for all glitches
-            Input can be: float - a constant SNR for all glitches generated.
-                          array - an array of SNR for each individual glitch. The order of the SNRs given matches up to the order the glitches are generated. 
-                                  One may use np.random.normal(mean, std, n_images_to_generate) in order to generate a normal distribution or 
-                                              np.random.uniform(low, high, n_images_to_generate) in order to generate a uniform distribution
-                          str   - "realistic", which assigns a differing SNR to each glitch based on their distribution seen in LIGOs observing runs.
+        :param SNR: The signal to noise ratio for the glitches, defaults to 10.
+
+            Input can be: 
+
+                | *float* - a constant SNR for all glitches generated. 
+                | *array* - an array of SNR for each individual glitch. The order of the SNRs given matches up to the order the glitches are generated. One may use np.random.normal(mean, std, n_images_to_generate) in order to generate a normal distribution or np.random.uniform(low, high, n_images_to_generate) in order to generate a uniform distribution. 
+                | *str*   - "realistic", which assigns a differing SNR to each glitch based on their distribution seen in LIGOs observing runs.
+
+
         :type SNR: Any, optional
         :param clean: Whether or not to remove the background noise from the generated glitches, defaults to True
         :type clean: bool, optional
