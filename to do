@@ -1,8 +1,4 @@
 To do:
-    Otsu's thresholding:
-        read about it
-        check it works in all glitch cases
-        openCV is too big! write own script (in C or Cython?)
 
     delete extra files for models that are not being used - also, get git lfs working!
 
@@ -12,5 +8,10 @@ To do:
 
     add GPS time
     look into amplitude of graph
+
+    Otsu's thresholding:
+        read about it
+        check it works in all glitch cases
+        openCV is too big! write own script (in C or Cython?)
 
 
