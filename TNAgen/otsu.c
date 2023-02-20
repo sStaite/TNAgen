@@ -1,3 +1,5 @@
+// https://github.com/jpbalarini/otsus/blob/master/algo.cpp
+// https://www.ipol.im/pub/art/2016/158/article_lr.pdf
 
 #include <stdio.h>
 
