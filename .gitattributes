@@ -1,5 +1,2 @@
 *.ipynb linguist-generated
-<<<<<<< HEAD
 . !text !filter !merge !diff
-=======
->>>>>>> origin/main
