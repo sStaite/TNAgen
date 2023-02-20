@@ -1,2 +1,1 @@
 *.ipynb linguist-generated
-. !text !filter !merge !diff
