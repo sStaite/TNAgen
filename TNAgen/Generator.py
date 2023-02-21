@@ -49,7 +49,8 @@ class Generator():
 
         # Get the list of glitches
         self.label_df = pd.read_csv(labelfile)
-        self.glitches = self.label_df['label'].tolist()
+        a = self.label_df['label'].tolist()
+        self.glitches = list(set(a).difference(set(["No_Glitch", "None_of_the_Above", "Extremely_Loud"])))
 
         # Get the standard PSD
         self.PSD = np.swapaxes(np.loadtxt(noisecurvefile), 0, 1)

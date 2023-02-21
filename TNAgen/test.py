@@ -1,9 +1,10 @@
 from ctypes import *
 import numpy as np
+import matplotlib.pyplot as plt
 # env /usr/bin/arch -x86_64 /bin/zsh --login
 # gcc -shared -o otsu.so -fPIC otsu.c
 
-data = np.loadtxt("TNAgen/output.txt").tolist()
+data = np.loadtxt("TNAgen/output.txt")
 
 class Spectrogram(Structure):
     _fields_ = [("a", c_int),
@@ -11,7 +12,6 @@ class Spectrogram(Structure):
 
 otsu = CDLL("TNAgen/otsu.so")
 otsu.compute.argtypes = [POINTER(Spectrogram)]
-
 t = Spectrogram()
 
 for i in range(140):
@@ -19,3 +19,6 @@ for i in range(140):
         t.array[i][j] = data[i][j]
 
 otsu.compute(byref(t))
+
+plt.imshow(data)
+plt.show()
