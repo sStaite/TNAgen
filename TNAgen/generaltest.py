@@ -4,7 +4,7 @@ from gwpy.plot import Plot
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-# import seaborn 
+import seaborn 
 
 
 def testGenerator(testing):
@@ -12,7 +12,7 @@ def testGenerator(testing):
     generator = Generator()
 
     for test in testing:
-        generator.generate(test, 8, SNR=15, clean=True)
+        generator.generate(test, 20, SNR=40, clean=True)
         #generator.save_as_png("TNAgen/data/sanity_images")
 
     generator.save_as_timeseries(path="TNAgen/data/sanity_images", name="test", noise=True, length=20)
@@ -34,13 +34,14 @@ def testRest():
     plot.close()
 
     # This can be used to display an image of a glitch in spectrogram
-    """
-    p = 0; i = 0
-    while p < 0.25:
-        p = glitch_times[i]
-        i += 1
+    
+    # p = 0; i = 0
+    # while p < 0.25:
+    #     p = glitch_times[i]
+    #     i += 1
 
-    out = (int((p)*4096), int((p+2)*4096))
+    # out = (int((p)*4096), int((p+2)*4096))
+    out = (8192, 8192*2)
 
     NFFT = int(4096/16.)
     NOVL = int(NFFT*15./16)
@@ -70,7 +71,7 @@ def testRest():
     fig = plot.get_figure()
     fig.savefig("TNAgen/data/sanity_images/spectrogram_q.png")
     plt.close()
-    """
+    
 
 
 if __name__ == "__main__":
@@ -78,7 +79,7 @@ if __name__ == "__main__":
             "Paired_Doves", "Repeating_Blips", "Scattered_Light", "Scratchy", "Violin_Mode", "Whistle", "Wandering_Line",
             "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Air_Compressor", "Power_Line", "Low_Frequency_Burst", "Low_Frequency_Lines"]
 
-    testing = ["Tomte"]
+    testing = ["Blip"]
 
     testGenerator(testing)
     testRest()

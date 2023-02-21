@@ -23,6 +23,7 @@ class Generator():
         self.curr_array = []
         self.curr_glitch = []
         self.curr_SNR = []
+        self.clean_array = []
 
         # Set up the generator  parameters
         gen_args = {
@@ -92,6 +93,7 @@ class Generator():
         inputs = []
         outputs = []
         label_list = []
+        clean_list = []
 
         if type(SNR) == float or type(SNR) == int: # We have a constant SNR for all glitches
             SNR_list = [SNR for x in range(n_images_to_generate)]
@@ -117,11 +119,13 @@ class Generator():
             im = outputs[i].detach().numpy()
             im = im[0, :,:,:]
             im = im[:, 0:140, 0:170] 
-            
-            if clean:
-                im = self._clean_spectrogram(im, glitch)
 
             np_array[i] = im 
+
+            if clean:
+                clean_list.append(True)
+            else: 
+                clean_list.append(False)
 
             label_list.append(glitch)
 
@@ -132,11 +136,12 @@ class Generator():
             self.curr_array = np_array
             self.curr_glitch = label_list
             self.curr_SNR = SNR_list
+            self.clean_array = clean_list
         else:
             self.curr_array = np.concatenate((self.curr_array, np_array), axis=0)
             self.curr_glitch += label_list
             self.curr_SNR += SNR_list
-
+            self.clean_array += clean_list
 
         return (np_array, label_list)
 
@@ -275,7 +280,9 @@ class Generator():
             # First convert the spectrogram data to timeseries data
             index = count_dict[self.curr_glitch[i]]
             count_dict[self.curr_glitch[i]] += 1
-            curr_time_series = self._convert_to_timeseries(self.curr_array[i], self.curr_SNR[i])
+            curr_time_series = self._adjust_amplitude(spectrogram=self.curr_array[i], PSD=self.PSD, 
+                                                        requiredSNR=self.curr_SNR[i],  glitch=self.curr_glitch[i], 
+                                                        clean=self.clean_array[i])
 
             # Check that the time series exists
             if curr_time_series is None:
@@ -304,7 +311,11 @@ class Generator():
         # Save dataset
         timeseries = np.swapaxes(timeseries, 0, 1)[1]
 
-        print([glitch_times[i] + 1 for i in range(len(glitch_times))])
+        l = []
+        for i in range(len(glitch_times)):
+            if 2 < glitch_times[i] + 1 < 4:
+                l.append(glitch_times[i])
+        print(l)
 
         # Add the gaussian noise
         if noise:
@@ -361,7 +372,7 @@ class Generator():
             self._clear_queue() 
 
 
-    def _convert_to_timeseries(self, spectrogram, SNR):
+    def _convert_to_timeseries(self, spectrogram):
         """
         Helper function that converts the given spectrogram into a timeseries.
 
@@ -370,6 +381,9 @@ class Generator():
         :return: A 2 second timeseries (8192 datapoints at 4096Hz) of the spectrogram data
         :rtype: numpy array
         """
+        # If we have a 3d spectrogram (i.e. (1 x 170 x 140)), convert it to 170x100
+        if len(spectrogram.shape) == 3: 
+            spectrogram = spectrogram[0]
 
         freq_values = np.logspace(3, 11, 140, base=2)
         arr = np.linspace(8, 2048, 140)
@@ -403,8 +417,6 @@ class Generator():
         time_series[1::2] *= -1            
         time_series = signal.resample(time_series, 8192)
 
-        time_series = self._adjust_amplitude(time_series, self.PSD, SNR)
-
         return time_series
 
 
@@ -420,6 +432,7 @@ class Generator():
         :return: a spectrogram of the same shape that has been cleaned
         :rtype: numpy array
         """
+        spectrogram = spectrogram.reshape((1, spectrogram.shape[0], spectrogram.shape[1]))
 
         # First, get rid of all background noise
         both = ["Paired_Doves", "Extremely_Loud", "Air_Compressor", "Low_Frequency_Lines", "1400Ripples", "Blip", "Chirp", "Koi_Fish", "Tomte", "Power_Line"]
@@ -469,7 +482,8 @@ class Generator():
         :type spectrogram: numpy array
         :param threshold: Threshold for which pixels should be cleaned and which should be untouched
         :type threshold: float
-        """
+        """ 
+
         indmax = np.unravel_index(np.argmax(spectrogram, axis=None), spectrogram.shape)
         min_time = max_time = indmax[2]
         p = spectrogram[indmax]
@@ -559,7 +573,7 @@ class Generator():
             print()
     
 
-    def _adjust_amplitude(self, timeseries, PSD, requiredSNR):
+    def _adjust_amplitude(self, spectrogram, PSD, requiredSNR, glitch, clean):
         """
         Helper function that calculate's the signal to noise ratio for a given glitch.
 
@@ -573,6 +587,8 @@ class Generator():
         :rtype: numpy array
         """
 
+        # First, find the SNR and the ratio we need to adjust the final timeseries by.
+        timeseries = self._convert_to_timeseries(spectrogram)
         fs = 4096
 
         # Convert the timeseries into freqsignal
@@ -600,9 +616,12 @@ class Generator():
         SNR = np.sqrt(SNRsq)
 
         # Since all calculations are linear, we can just adjust timeseries to get SNR we need
-        timeseries *= requiredSNR/SNR 
+        ratio = requiredSNR/SNR 
 
-        return timeseries
+        if clean:
+            spectrogram = self._clean_spectrogram(spectrogram, glitch)
+
+        return self._convert_to_timeseries(spectrogram) * ratio 
 
       
     def _add_gaussian_noise(self, timeseries, PSD, duration):
