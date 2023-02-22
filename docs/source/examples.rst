@@ -14,7 +14,7 @@ Generating and saving 50 Koi Fish glitches as images of spectrograms:
 
 .. code-block:: python
 
-    generator.generate("Koi_Fish", 50)
+    generator.generate("Koi_Fish", 50, SNR = 10)
     generator.save_as_png("path/to/file", clear_queue=True)
 
 Generating and saving 2 of each glitch, each with a SNR of 12, and saving as time-series in a gwf file:

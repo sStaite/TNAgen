@@ -147,13 +147,23 @@ class Generator():
         return (np_array, label_list)
 
 
-    def generate_all(self, n_images_to_generate=1, clean=True):
+    def generate_all(self, n_images_to_generate=1, SNR=10., clean=True):
         """
         Generates images for all the glitches, in the form of numpy arrays. The generated array can be accessed 
         through 'generator.curr_array' and the glitch labels through 'generator.curr_glitch'.
 
         :param n_images_to_generate: Number of each image to be generated, defaults to 1
         :type n_images_to_generate: int, optional
+        :param SNR: The signal to noise ratio for the glitches, defaults to 10.
+
+            Input can be: 
+
+                | *float* - a constant SNR for all glitches generated. 
+                | *array* - an array of SNR for each individual glitch. The order of the SNRs given matches up to the order the glitches are generated. One may use np.random.normal(mean, std, n_images_to_generate) in order to generate a normal distribution or np.random.uniform(low, high, n_images_to_generate) in order to generate a uniform distribution. 
+                | *str*   - "realistic", which assigns a differing SNR to each glitch based on their distribution seen in LIGOs observing runs.
+
+
+        :type SNR: Any, optional
         :param clean: Whether or not to remove the background noise from the generated glitches, defaults to True
         :type clean: bool, optional
         :return: a ((n_images_to_generate * num_of_glitches) x 140 x 170) numpy array of the images generated 
@@ -161,9 +171,24 @@ class Generator():
         :rtype: tuple
         """
         
+        if type(SNR) == float or type(SNR) == int: # We have a constant SNR for all glitches
+            SNR_list = [SNR for x in range(n_images_to_generate)]
+        elif type(SNR) == list or type(SNR) == np.ndarray: # We have an array of times
+            if len(SNR) != n_images_to_generate:
+                raise Exception("The length of the SNR array is not 'n_images_to_generate'.")
+            SNR_list = SNR
+        elif type(SNR) == str:
+            if SNR == "realistic":
+                SNR_list = self._create_realistic(glitch, n_images_to_generate)
+            else:
+                raise Exception("The string used for the SNR array is not recognised")
+        else:
+            raise Exception("The input type for the SNR is not recognised")
+
         # Generate X array for glitches
         np_arrays = np.zeros((len(self.glitches) * n_images_to_generate, 140, 170))
         label_list = []
+        clean_list = []
         index = 0
 
         # Iterate over each glitch and generate the images
@@ -185,7 +210,9 @@ class Generator():
                 im = im[:, 0:140, 0:170] 
 
                 if clean:
-                    im = self._clean_spectrogram(im, glitch)
+                    clean_list.append(True)
+                else: 
+                    clean_list.append(False)
 
                 np_arrays[index] = im
                 label_list.append(glitch)
@@ -199,9 +226,13 @@ class Generator():
         if len(self.curr_array) == 0:
             self.curr_array = np_arrays
             self.curr_glitch = label_list
+            self.curr_glitch = label_list
+            self.curr_SNR = SNR_list
         else:
             self.curr_array = np.concatenate((self.curr_array, np_arrays), axis=0)
             self.curr_glitch += label_list
+            self.curr_glitch = label_list
+            self.curr_SNR = SNR_list            
 
         return (np_arrays, label_list)
 
@@ -281,9 +312,18 @@ class Generator():
             # First convert the spectrogram data to timeseries data
             index = count_dict[self.curr_glitch[i]]
             count_dict[self.curr_glitch[i]] += 1
-            curr_time_series = self._adjust_amplitude(spectrogram=self.curr_array[i], PSD=self.PSD, 
-                                                        requiredSNR=self.curr_SNR[i],  glitch=self.curr_glitch[i], 
-                                                        clean=self.clean_array[i])
+            # Find the ratio we need to change the timeseries by
+            SNRratio = self._adjust_amplitude(spectrogram=self.curr_array[i], PSD=self.PSD, 
+                                                        requiredSNR=self.curr_SNR[i])
+            
+            # Now we can clean the data (if we want to)
+            if (self.clean_array[i]):
+                spectrogram = self._clean_spectrogram(self.curr_array[i], self.curr_glitch[i])
+            else:
+                spectrogram = self.curr_array[i]
+
+            # Create our timeseries
+            curr_time_series = self._convert_to_timeseries(spectrogram) * SNRratio
 
             # Check that the time series exists
             if curr_time_series is None:
@@ -311,12 +351,6 @@ class Generator():
 
         # Save dataset
         timeseries = np.swapaxes(timeseries, 0, 1)[1]
-
-        l = []
-        for i in range(len(glitch_times)):
-            if 2 < glitch_times[i] + 1 < 4:
-                l.append(glitch_times[i])
-        print(l)
 
         # Add the gaussian noise
         if noise:
@@ -440,6 +474,7 @@ class Generator():
         recurring_horizontally = ["Scattered_Light", "Wandering_Line", "Violin_Mode"]
         recurring_vertically = ["1080Lines", "Low_Frequency_Burst", "Repeating_Blips",  "Scratchy", "Whistle"]
         neither = ["Light_Modulation", "Helix", "Whistle"]
+
         if glitch in both: 
             threshold = 0.30
             if glitch in ["Low_Frequency_Lines", "Paired_Doves"]: 
@@ -574,7 +609,7 @@ class Generator():
             print()
     
 
-    def _adjust_amplitude(self, spectrogram, PSD, requiredSNR, glitch, clean):
+    def _adjust_amplitude(self, spectrogram, PSD, requiredSNR):
         """
         Helper function that calculate's the signal to noise ratio for a given glitch.
 
@@ -617,12 +652,9 @@ class Generator():
         SNR = np.sqrt(SNRsq)
 
         # Since all calculations are linear, we can just adjust timeseries to get SNR we need
-        ratio = requiredSNR/SNR 
+        ratio = requiredSNR/SNR             
 
-        if clean:
-            spectrogram = self._clean_spectrogram(spectrogram, glitch)
-
-        return self._convert_to_timeseries(spectrogram) * ratio 
+        return ratio 
 
       
     def _add_gaussian_noise(self, timeseries, PSD, duration):

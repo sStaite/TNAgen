@@ -5,7 +5,15 @@ To do:
     whats going on with SNR 
 
 
-Notes:
+#### Notes:
+
+## SNR
+At the moment, I am finding the SNR of the glitch before it is cleaned - then saving that requiredSNR/actualSNR. I then clean the spectrogram, convert it to a timeseries then
+multiply it by that ratio. 
+
+I'm still not sure if it works :)
+
+I haven't found the realistic SNR's at the moment too.
 
 ## Git LFS
 Git LFS will be a good option for the models - 19 models that take up about 1.06gb of space. Unfortunately I have used over 1gb so github banned me for a month from using it.
@@ -30,9 +38,9 @@ torchGAN
 
 ## Otsu's method
 Otsu's method works - definitely could be worth exploring in _clean_spectrogram() function, to find the threshold -> could replace 'spectrogram[spectrogram < threshold] = 0'
-Would like to explore this but do not have time.
+Would like to explore this but do not have time - Otsu works for glitches which have a larger amout of high intensity pixels. 
 
-If you update the C code, you must recompile the .so file
+If you update the C code, you have to recompile the .so file
 Since I have a M1 chip in my macbook, I needed to change my terminal architechure (I don't really know what this means!)
 To do this, I used
 ```console
@@ -44,7 +52,10 @@ This has to return a value of 'x86_64' or 'i386', if it is 'arm64' the next line
 $ gcc -shared -o otsu.so -fPIC otsu.c
 ```
 
-How to use:
+How to use: 
+
+look at noise_removal.ipynb
+OR 
 ```python
 from ctypes import * # This is a default package for importing C code into python
 
@@ -74,3 +85,7 @@ plt.show()
 threshold = otsu.compute_threshold(byref(t)) # This is a number from 0 to 255, so scale it to [0, 1]
 threshold /= 255
 ```
+
+## More
+
+Anything more might be at https://tnagen.readthedocs.io/en/latest/examples.html, otherwise email me at seamus.staite@gmail.com :-)
