@@ -88,7 +88,7 @@
 detector data with generative adversarial networks by Powell et. al. ” &lt;<a class="reference external" href="https://arxiv.org/abs/2207.00207">https://arxiv.org/abs/2207.00207</a>&gt;’</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Generator.Generator.generate">
-<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">glitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_images_to_generate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.generate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">glitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_images_to_generate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.generate" title="Permalink to this definition"></a></dt>
 <dd><p>Generates images for the given glitch in the form of numpy arrays, and adds it to the ‘queue’.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -120,13 +120,23 @@ and a (n_images_to_generate) list of corresponding glitch labels</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="Generator.Generator.generate_all">
-<span class="sig-name descname"><span class="pre">generate_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_images_to_generate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.generate_all" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">generate_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_images_to_generate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SNR</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Generator.Generator.generate_all" title="Permalink to this definition"></a></dt>
 <dd><p>Generates images for all the glitches, in the form of numpy arrays. The generated array can be accessed
 through ‘generator.curr_array’ and the glitch labels through ‘generator.curr_glitch’.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_images_to_generate</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of each image to be generated, defaults to 1</p></li>
+<li><p><strong>SNR</strong> (<em>Any</em><em>, </em><em>optional</em>) – <p>The signal to noise ratio for the glitches, defaults to 10.</p>
+<p>Input can be:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><em>float</em> - a constant SNR for all glitches generated.</div>
+<div class="line"><em>array</em> - an array of SNR for each individual glitch. The order of the SNRs given matches up to the order the glitches are generated. One may use np.random.normal(mean, std, n_images_to_generate) in order to generate a normal distribution or np.random.uniform(low, high, n_images_to_generate) in order to generate a uniform distribution.</div>
+<div class="line"><em>str</em>   - “realistic”, which assigns a differing SNR to each glitch based on their distribution seen in LIGOs observing runs.</div>
+</div>
+</div></blockquote>
+</p></li>
 <li><p><strong>clean</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether or not to remove the background noise from the generated glitches, defaults to True</p></li>
 </ul>
 </dd>

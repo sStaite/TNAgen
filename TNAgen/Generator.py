@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 import pandas as pd 
 import librosa
-from scipy import signal, interpolate
+from scipy import signal, interpolate, stats
 from gwpy.timeseries import TimeSeries
 import h5py
 import os
@@ -46,6 +46,7 @@ class Generator():
 
         labelfile = os.path.join(os.path.dirname(__file__), 'data/array_to_label_conversion.csv')
         noisecurvefile = os.path.join(os.path.dirname(__file__), 'data/ALIGO_noise_curve.txt')
+        SNRfile = os.path.join(os.path.dirname(__file__), 'data/SNR_weights.csv')
 
         # Get the list of glitches
         self.label_df = pd.read_csv(labelfile)
@@ -54,6 +55,12 @@ class Generator():
 
         # Get the standard PSD
         self.PSD = np.swapaxes(np.loadtxt(noisecurvefile), 0, 1)
+
+        # Get the weights for the realistic SNR distribution
+        q = pd.read_csv(SNRfile, index_col=0)
+        self.SNR_weights = {}
+        for index, row in q.iterrows():
+            self.SNR_weights[index] = [row[0], row[1]] 
 
 
     def generate(self, glitch, n_images_to_generate=10, SNR=10., clean=True):
@@ -708,7 +715,35 @@ class Generator():
         :return: Array of SNRs.
         :rtype: numpy array
         """
+        q = self._get_scipy_dist_object(glitch)
+        data = q.rvs(size=n_images_to_generate) + 7.5
+        return data
 
-        return [10 for n in range(n_images_to_generate)]
+
+    def _get_scipy_dist_object(self, glitch):
+        """
+        Helper function that creates gets the distribution scipy object that can be used to generate realistic SNRs for a particular glitch.
+
+        :param glitch: The glitch that we want SNRs for
+        :type glitch: str
+        :return: Scipy distribution object.
+        :rtype: scipy.stats._distn_infrastructure.rv_frozen
+        """
+
+        distribution = self.SNR_weights[glitch][0]
+        weights = eval(self.SNR_weights[glitch][1])
+
+        if distribution == 'gamma':
+            q = stats.gamma(a=weights['a'], loc=weights['loc'], scale=weights['scale'])
+        elif distribution == 'expon':
+            q = stats.expon(loc=weights['loc'], scale=weights['scale'])
+        elif distribution == 'lognorm':
+            q = stats.lognorm(s=weights['s'], loc=weights['loc'], scale=weights['scale'])
+        elif distribution == 'rayleigh':
+            q = stats.rayleigh(loc=weights['loc'], scale=weights['scale'])
+        elif distribution == 'pareto':
+            q = stats.pareto(b=weights['b'], loc=weights['loc'], scale=weights['scale'])
+
+        return q
 
 

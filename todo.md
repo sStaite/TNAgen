@@ -1,8 +1,7 @@
 To do:
 
-    look at paper jade sent - generate the whistle glitch from a mathematical formula
-
-    whats going on with SNR 
+    SNR for generate_all
+    write notes on where i saved things / what particular notebooks do
 
 
 #### Notes:
@@ -11,9 +10,7 @@ To do:
 At the moment, I am finding the SNR of the glitch before it is cleaned - then saving that requiredSNR/actualSNR. I then clean the spectrogram, convert it to a timeseries then
 multiply it by that ratio. 
 
-I'm still not sure if it works :)
-
-I haven't found the realistic SNR's at the moment too.
+I worked through SNR that are realistic, but haven't really tested it enough to be certain about it.
 
 ## Git LFS
 Git LFS will be a good option for the models - 19 models that take up about 1.06gb of space. Unfortunately I have used over 1gb so github banned me for a month from using it.
