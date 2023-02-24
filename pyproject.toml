@@ -9,12 +9,18 @@ authors = [
   { name="Seamus Staite", email="seamus.staite@gmail.com" },
   { name="Jade Powell", email="jade.powell@ligo.org" },
 ]
+dynamic = ["keywords"]
 description = "A package that generates transient noise artifacts in gravitational-wave detector data."
 readme = "README.md"
 requires-python = ">=3.10.8"
 classifiers = [
     'Development Status :: 3 - Alpha',
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GPL License",
+    "License :: OSI Approved :: GNU General Public License (GPL)",
     "Operating System :: OS Independent",
 ]
+
+[project.urls]
+homapage = 'https://github.com/sStaite/TNAgen'
+sourcecode = 'https://github.com/sStaite/TNAgen'
+documentation = 'https://tnagen.readthedocs.io/en/latest/'

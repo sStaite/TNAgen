@@ -13,9 +13,7 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url='https://github.com/sStaite/TNAgen',
     project_urls={
-        'Documentation': '',
-        'Bug Reports':
-        'https://github.com/sStaite/TNAgen/issues',
+        'Documentation': 'https://tnagen.readthedocs.io/en/latest/',
         'Source Code': 'https://github.com/sStaite/TNAgen',
     },
     include_package_data=True,
@@ -24,7 +22,7 @@ setuptools.setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GPL License",
+        "License :: OSI Approved :: GNU General Public License (GPL)",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.10.8',

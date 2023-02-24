@@ -1,0 +1,9 @@
+LICENSE.txt
+README.md
+pyproject.toml
+setup.py
+TNAgen/TNAgen.egg-info/PKG-INFO
+TNAgen/TNAgen.egg-info/SOURCES.txt
+TNAgen/TNAgen.egg-info/dependency_links.txt
+TNAgen/TNAgen.egg-info/top_level.txt
+tests/test.py

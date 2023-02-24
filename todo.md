@@ -11,11 +11,11 @@ From https://packaging.python.org/en/latest/tutorials/packaging-projects/
 ```python3 -m build```
 
 3) Make an account on pypi.prg
-2
+
 4) From the main folder, use: 
 ```twine upload dist/* ```
 
-5) Then it hopefully should be downloadable with: ```pip install TNA```
+5) Then it hopefully should be downloadable with: ```pip install TNAgen```
 
 
 ## Files

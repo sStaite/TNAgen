@@ -1,3 +1,22 @@
+Metadata-Version: 2.1
+Name: TNAgen
+Version: 0.0.1
+Summary: A package that generates transient noise artifacts in gravitational-wave detector data.
+Home-page: https://github.com/sStaite/TNAgen
+Author: ['Seamus Staite', 'Jade Powell']
+Author-email: Seamus Staite <seamus.staite@gmail.com>, Jade Powell <jade.powell@ligo.org>
+Project-URL: homapage, https://github.com/sStaite/TNAgen
+Project-URL: sourcecode, https://github.com/sStaite/TNAgen
+Project-URL: documentation, https://tnagen.readthedocs.io/en/latest/
+Keywords: gravitational-wave,noise artifacts,GANs
+Classifier: Development Status :: 3 - Alpha
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.10.8
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+
 
 
 # TNAgen
