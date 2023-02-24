@@ -1,9 +1,5 @@
-To do:
 
-    test examples that I have written down
-
-
-#### Notes:
+# Notes:
 
 ## Creating the package
 From https://packaging.python.org/en/latest/tutorials/packaging-projects/
@@ -15,7 +11,7 @@ From https://packaging.python.org/en/latest/tutorials/packaging-projects/
 ```python3 -m build```
 
 3) Make an account on pypi.prg
-
+2
 4) From the main folder, use: 
 ```twine upload dist/* ```
 
@@ -23,7 +19,6 @@ From https://packaging.python.org/en/latest/tutorials/packaging-projects/
 
 
 ## Files
-
 These are all the files that are not for the package, that I just use because they are helpful.
 
 All of examples/ are images that show progress throughout the 7 weeks
