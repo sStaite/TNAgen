@@ -1,16 +1,37 @@
 To do:
 
-    how to create the package
-    write notes on where i saved things / what particular notebooks do
     test examples that I have written down
 
 
 #### Notes:
 
 ## Creating the package
+From https://packaging.python.org/en/latest/tutorials/packaging-projects/
+
+1) Update pip if needed:
+```python3 -m pip install --upgrade build```
+
+2) Then, in the folder with pyproject.toml:
+```python3 -m build```
+
+3) Make an account on pypi.prg
+
+4) From the main folder, use: 
+```twine upload dist/* ```
+
+5) Then it hopefully should be downloadable with: ```pip install TNA```
 
 
 ## Files
+
+These are all the files that are not for the package, that I just use because they are helpful.
+
+All of examples/ are images that show progress throughout the 7 weeks
+
+TNAgen/generaltest.py  is the main python file that I have been using to test the package.
+TNAgen/data/sanity_images is the folder where generaltest.py saves to
+
+noise_removal.ipynb and snr.ipynb are notebooks that I used to test otsu's method and to find the realistic SNRs respectively 
 
 
 ## SNR

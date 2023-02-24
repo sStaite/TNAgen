@@ -22,15 +22,14 @@ Generating and saving 2 of each glitch, each with a SNR of 12, and saving as tim
 .. code-block:: python
 
     generator.generate_all(2, SNR=12)
-    generator.save_as_hdf5("path/to/file", "name", format="gwf", clear_queue=True)
+    generator.save_as_timeseries("path/to/file", "name", format="gwf", clear_queue=True)
 
 Generating and saving 96 Blip glitches and saving as time-series in a gwf file:
 
 .. code-block:: python
 
     generator.generate("Blip", 96, SNR='realistic')
-    generator.save_as_hdf5("path/to/file", "name", format="hdf5", clear_queue=True)
-
+    generator.save_as_timeseries("path/to/file", "name", format="hdf5", clear_queue=True)
 
 Generating raw data (numpy arrays) for 50 Chirp glitches:
 

@@ -11,7 +11,7 @@ authors = [
 ]
 description = "A package that generates transient noise artifacts in gravitational-wave detector data."
 readme = "README.md"
-requires-python = ">=3.8.5"
+requires-python = ">=3.10.8"
 classifiers = [
     'Development Status :: 3 - Alpha',
     "Programming Language :: Python :: 3",

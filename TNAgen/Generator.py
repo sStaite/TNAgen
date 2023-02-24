@@ -248,7 +248,7 @@ class Generator():
         return (np_arrays, label_list)
 
 
-    def save_as_png(self, path, clear_queue=False):
+    def save_as_png(self, path=None, clear_queue=False):
         """
         Saves the queue of artifacts, which are in the form of a spectrogram, as seperate png files.
 
@@ -268,17 +268,22 @@ class Generator():
             index = count_dict[self.curr_glitch[i]]
             count_dict[self.curr_glitch[i]] += 1
             
-            plt.imsave(path + f"/{self.curr_glitch[i]}_{index}.png", self.curr_array[i])
+            if path is None:
+                name = f"{self.curr_glitch[i]}_{index}.png"
+            else:
+                name = path + f"/{self.curr_glitch[i]}_{index}.png"
+            
+            plt.imsave(name, self.curr_array[i])
 
             self._timer("Saving images:    ", i+1, len(self.curr_array))
 
             index+=1
 
         if clear_queue:
-            self._clear_queue()
+            self.clear_queue()
 
 
-    def save_as_timeseries(self, path, name="timeseries", noise=True, length="Default", position=None, format="gwf", t0=1238166018.0, clear_queue=False):
+    def save_as_timeseries(self, path=None, name="timeseries", noise=True, length="Default", position=None, format="gwf", t0=1238166018.0, clear_queue=False):
         """
         Saves the queue of artifacts in a file. The snippets are 1/3 * num of glitches seconds long, unless specified otherwise.
         Sample rate and the position of the glitches are saved into the file. The channel name of the timeseries is the same as the name of the file.
@@ -370,15 +375,18 @@ class Generator():
         t = TimeSeries(timeseries, t0=t0, sample_rate=4096, name=f'{name}', channel="CHANNEL")
 
         # Save the dataset
-        if format == "gwf":
-            t.write(path + f"/{name}.gwf")
-        elif format == "hdf5":
-            t.write(path + f"/{name}.hdf5")
-        else:
+        if format not in ['gwf', 'hdf5', 'hdf', 'h5']:
             raise Exception(f"The format {format} cannot be used.")
 
+        if path is None:
+            name = f"{name}.{format}"
+        else: 
+            name = path + f"/{name}.{format}"
+        
+        t.write(name)
+
         if clear_queue:
-            self._clear_queue()
+            self.clear_queue()
 
 
     def save_as_array(self, path, name="glitch_file", clear_queue=False):
@@ -394,7 +402,12 @@ class Generator():
         :type clear_queue: bool, optional
         """
 
-        f = h5py.File(path + f"/{name}.hdf5", "w")
+        if path is None:
+            name = f"{name}.hdf5"
+        else:
+            name = path + f"/{name}.hdf5"
+
+        f = h5py.File(name, "w")
         glitches_used = list(set(self.curr_glitch))
         num_glitches = len(glitches_used)
 
@@ -415,7 +428,7 @@ class Generator():
         f.close()
 
         if clear_queue:
-            self._clear_queue() 
+            self.clear_queue() 
 
 
     def _convert_to_timeseries(self, spectrogram):
@@ -603,12 +616,14 @@ class Generator():
         spectrogram[0, max_time:, :] = 0
     
     
-    def _clear_queue(self):
+    def clear_queue(self):
         """
         Clears the current queue of artifacts.
         """
         self.curr_array = []
         self.curr_glitch = []
+        self.curr_SNR = []
+        self.clean_array = []
             
     
     def _timer(self, msg, curr, total):
