@@ -19,13 +19,13 @@ setuptools.setup(
         'Source Code': 'https://github.com/sStaite/TNAgen',
     },
     include_package_data=True,
-    package_dir={'': 'src'},
-    packages=setuptools.find_packages(where='src'),
+    package_dir={'': 'TNAgen'},
+    packages=setuptools.find_packages(where='TNAgen'),
     classifiers=[
         'Development Status :: 3 - Alpha',
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GPL License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.8.5',
+    python_requires='>=3.10.8',
 )
