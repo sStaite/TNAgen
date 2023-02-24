@@ -12,10 +12,10 @@ def testGenerator(testing):
     generator = Generator()
 
     for test in testing:
-        generator.generate(test, 8, SNR='realistic', clean=True)
+        generator.generate_all(1, SNR='realistic', clean=True)
         #generator.save_as_png("TNAgen/data/sanity_images")
 
-    generator.save_as_timeseries(path="TNAgen/data/sanity_images", name="test", noise=True, length=4)
+    generator.save_as_timeseries(path="TNAgen/data/sanity_images", name="test", noise=True, length = 5)
     #generator.save_as_png("TNAgen/data/sanity_images")
     #generator.save_as_array("TNAgen/data/sanity_images", clear_queue=True)
 

@@ -1,10 +1,17 @@
 To do:
 
-    SNR for generate_all
+    how to create the package
     write notes on where i saved things / what particular notebooks do
+    test examples that I have written down
 
 
 #### Notes:
+
+## Creating the package
+
+
+## Files
+
 
 ## SNR
 At the moment, I am finding the SNR of the glitch before it is cleaned - then saving that requiredSNR/actualSNR. I then clean the spectrogram, convert it to a timeseries then
@@ -85,4 +92,4 @@ threshold /= 255
 
 ## More
 
-Anything more might be at https://tnagen.readthedocs.io/en/latest/examples.html, otherwise email me at seamus.staite@gmail.com :-)
+Anything more might be at https://tnagen.readthedocs.io/en/latest, otherwise email me at seamus.staite@gmail.com :-)

@@ -177,26 +177,24 @@ class Generator():
             and a (n_images_to_generate * num_of_glitches) list of corresponding glitch labels.
         :rtype: tuple
         """
-        
+    
+        # Generate X array for glitches
+        np_arrays = np.zeros((len(self.glitches) * n_images_to_generate, 140, 170))
+        label_list = []
+        clean_list = []
+        SNR_list = np.empty((0, ))
+        index = 0
+
         if type(SNR) == float or type(SNR) == int: # We have a constant SNR for all glitches
-            SNR_list = [SNR for x in range(n_images_to_generate)]
+            SNR_list = [SNR for x in range(n_images_to_generate * len(self.glitches))]
         elif type(SNR) == list or type(SNR) == np.ndarray: # We have an array of times
             if len(SNR) != n_images_to_generate:
                 raise Exception("The length of the SNR array is not 'n_images_to_generate'.")
             SNR_list = SNR
         elif type(SNR) == str:
-            if SNR == "realistic":
-                SNR_list = self._create_realistic(glitch, n_images_to_generate)
-            else:
-                raise Exception("The string used for the SNR array is not recognised")
+            pass # This means we need realistic SNRs, but we will do that in the for loop below
         else:
             raise Exception("The input type for the SNR is not recognised")
-
-        # Generate X array for glitches
-        np_arrays = np.zeros((len(self.glitches) * n_images_to_generate, 140, 170))
-        label_list = []
-        clean_list = []
-        index = 0
 
         # Iterate over each glitch and generate the images
         for glitch in self.glitches:
@@ -204,6 +202,12 @@ class Generator():
             state_dict = torch.load(model_weights_file, map_location='cpu')
             self.generator.load_state_dict(state_dict)
             
+            if type(SNR) == str:
+                if SNR == "realistic":
+                    SNR_list = np.concatenate([SNR_list, self._create_realistic(glitch, n_images_to_generate)])
+                else:
+                    raise Exception("The string used for the SNR array is not recognised")
+
             inputs = []
             outputs = []
             for i in range(n_images_to_generate):
@@ -233,14 +237,14 @@ class Generator():
         if len(self.curr_array) == 0:
             self.curr_array = np_arrays
             self.curr_glitch = label_list
-            self.curr_glitch = label_list
+            self.clean_array = clean_list
             self.curr_SNR = SNR_list
         else:
             self.curr_array = np.concatenate((self.curr_array, np_arrays), axis=0)
             self.curr_glitch += label_list
-            self.curr_glitch = label_list
-            self.curr_SNR = SNR_list            
-
+            self.clean_array += clean_list
+            self.curr_SNR = np.concatenate((self.curr_SNR, SNR_list), axis=0)            
+        
         return (np_arrays, label_list)
 
 
