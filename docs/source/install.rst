@@ -1,14 +1,12 @@
 Installation
 ============
 
-To use TNAgen, a Conda environment must be used - this is because python-framel (the python package that is used to write data to .gwf files) can only be managed by Conda. 
-Annoyingly, torchGAN can only be installed via pip. This means the requirements are stored in a requirements.yml file. 
-
-Conda:
+Use either of:
 
 .. code-block:: console
 
-   $ conda install TNAgen
+   $ pip install TNAgen
+   $ pip install -i https://pypi.anaconda.org/sstaite/simple tnagen
 
 From source: 
 

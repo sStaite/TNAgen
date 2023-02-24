@@ -22,6 +22,14 @@ requirements:
   run:
     - python >=3.10.8
 
+test:
+  imports:
+    - TNAgen
+  commands:
+    - pip check
+  requires:
+    - pip
+
 about:
   home: https://github.com/sStaite/TNAgen
   summary: A package that generates transient noise artifacts in gravitational-wave detector data.

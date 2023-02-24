@@ -21,6 +21,6 @@ classifiers = [
 ]
 
 [project.urls]
-homapage = 'https://github.com/sStaite/TNAgen'
+homepage = 'https://github.com/sStaite/TNAgen'
 sourcecode = 'https://github.com/sStaite/TNAgen'
 documentation = 'https://tnagen.readthedocs.io/en/latest/'
