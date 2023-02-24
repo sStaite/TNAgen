@@ -27,8 +27,7 @@ From Source:
 ```console
 $ git clone https://github.com/sStaite/TNAgen
 $ cd TNAgen
-$ python3 -m pip install --upgrade build
-$ python3 -m build
+$ python setup.py install
 ```
 
 ## Documentation
